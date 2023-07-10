@@ -1,0 +1,51 @@
+version: '3.6'
+
+services:
+  mongo:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mercant-db-data:/data/db
+    working_dir: /usr/local/sampleCollections
+
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: app
+    volumes:
+      - mercant-pg-data:/var/lib/postgresql/data
+
+  server:
+    image: node
+    environment:
+      DATABASE_URL: postgres://root:password@db:5432/app
+      JWT_SECRET: HhJK7!hjjh!jg2addMJ78bj
+    working_dir: /usr/src/app
+    volumes:
+      - ./back:/usr/src/app
+    command:
+      - /bin/bash
+      - -c
+      - |
+        npm install
+        npm run build
+
+  front:
+    image: node:19.6
+    working_dir: /usr/src/app
+    volumes:
+      - ./front:/usr/src/app
+    command:
+      - /bin/bash
+      - -c
+      - |
+          npm install
+          npm run build
+
+volumes:
+  mercant-db-data: {}
+  mercant-pg-data: {}

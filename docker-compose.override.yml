@@ -1,0 +1,27 @@
+version: '3.6'
+
+services:
+  mongo:
+    ports:
+      - 27018:27017
+  db:
+    ports:
+      - 5433:27017
+  server:
+    ports:
+      - "3002:3000"
+    command:
+      - /bin/bash
+      - -c
+      - |
+        npm install
+        npm run dev
+  front:
+    ports:
+      - "8002:5173"
+    command:
+      - /bin/bash
+      - -c
+      - |
+          npm install
+          npm run dev
