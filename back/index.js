@@ -3,6 +3,7 @@ const app = express();
 const GenericRouter = require("./routes/genericCRUD");
 const GenericController = require("./controllers/genericCRUD");
 const userService = require("./services/user");
+const productService = require("./services/product");
 const errorHandler = require("./middlewares/errorHandler");
 const cors = require("cors");
 
@@ -20,7 +21,9 @@ app.use(function (req, res, next) {
 });
 
 app.use("/users", new GenericRouter(new GenericController(userService)));
+app.use("/products", new GenericRouter(new GenericController(productService)));
 
-app.listen(3000, () => {
-  console.log("Listening on port 3000!");
+const PORT = process.env.PORT;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}.`);
 });
