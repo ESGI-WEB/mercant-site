@@ -8,7 +8,6 @@ const db = {
 
 fs.readdirSync(path.join(__dirname, "models")).forEach((file) => {
   const model = require(path.join(__dirname, "models", file))(connection);
-  console.log(model.name, model.prototype.constructor.name);
   db[model.name] = model;
 });
 
