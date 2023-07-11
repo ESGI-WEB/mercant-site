@@ -5,6 +5,17 @@ module.exports = function (connection) {
     class OrderDetails extends Model {}
 
     OrderDetails.init({
+        currency: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+                validate: {
+                    notNull: {
+                        msg: "Currency cannot be null",
+                    },
+                },
+            },
+        },
         quantity: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -17,14 +28,14 @@ module.exports = function (connection) {
                 },
             },
         },
-        OrderId: {
+        order_id: {
             type: DataTypes.INTEGER,
             references: {
                 model: 'orders',
                 key: 'id'
             }
         },
-        ProductId: {
+        product_id: {
             type: DataTypes.INTEGER,
             references: {
                 model: 'products',
