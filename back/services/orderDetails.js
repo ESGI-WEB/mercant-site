@@ -22,7 +22,6 @@ module.exports = {
         orderId: orderId,
         productId: productId,
         quantity: quantity,
-        currency: currency
       });
 
       const newTotalPrice = product.dataValues.price * quantity
