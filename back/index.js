@@ -4,6 +4,7 @@ const GenericRouter = require("./routes/genericCRUD");
 const GenericController = require("./controllers/genericCRUD");
 const userService = require("./services/user");
 const productService = require("./services/product");
+const orderService = require("./services/order");
 const errorHandler = require("./middlewares/errorHandler");
 const cors = require("cors");
 
@@ -22,6 +23,7 @@ app.use(function (req, res, next) {
 
 app.use("/users", new GenericRouter(new GenericController(userService)));
 app.use("/products", new GenericRouter(new GenericController(productService)));
+app.use("/orders", new GenericRouter(new GenericController(orderService)));
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {

@@ -25,10 +25,28 @@ module.exports = function (connection) {
         }
     );
 
-    Order.belongsTo(User(connection));
-    User(connection).hasMany(Order);
-    Order.belongsToMany(Product(connection), { through: OrderDetails(connection) });
-    Product(connection).belongsToMany(Order, { through: OrderDetails(connection) });
+    Order.belongsTo(User(connection), {
+        foreignKey: {
+            allowNull: false
+        }
+    });
+    User(connection).hasMany(Order, {
+        foreignKey: {
+            allowNull: false
+        }
+    });
+    Order.belongsToMany(Product(connection), {
+        through: OrderDetails(connection),
+        foreignKey: {
+            allowNull: false
+        }
+    });
+    Product(connection).belongsToMany(Order, {
+        through: OrderDetails(connection),
+        foreignKey: {
+            allowNull: false
+        }
+    });
 
     return Order;
 };

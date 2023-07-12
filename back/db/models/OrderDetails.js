@@ -28,14 +28,14 @@ module.exports = function (connection) {
                 },
             },
         },
-        order_id: {
+        orderId: {
             type: DataTypes.INTEGER,
             references: {
                 model: 'orders',
                 key: 'id'
             }
         },
-        product_id: {
+        productId: {
             type: DataTypes.INTEGER,
             references: {
                 model: 'products',
