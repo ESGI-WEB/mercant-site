@@ -9,10 +9,8 @@ module.exports = function (connection) {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
-                validate: {
-                    notNull: {
-                        msg: "Currency cannot be null",
-                    },
+                notNull: {
+                    msg: "Currency cannot be null",
                 },
             },
         },
@@ -20,11 +18,9 @@ module.exports = function (connection) {
             type: DataTypes.INTEGER,
             allowNull: false,
             validate: {
-                isInteger: true,
-                validate: {
-                    notNull: {
-                        msg: "Quantity cannot be null",
-                    },
+                isInt: true,
+                notNull: {
+                    msg: "Quantity cannot be null",
                 },
             },
         },

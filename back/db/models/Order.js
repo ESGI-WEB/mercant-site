@@ -10,12 +10,7 @@ module.exports = function (connection) {
         {
             totalPrice: {
                 type: DataTypes.FLOAT,
-                allowNull: false,
-                validate: {
-                    notNull: {
-                        msg: "Price cannot be null",
-                    },
-                },
+                defaultValue: 0
             },
         },
         {

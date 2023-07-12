@@ -38,7 +38,6 @@ module.exports = function (connection) {
                     notNull: {
                         msg: 'Password cannot be null'
                     },
-
                 },
             },
         },

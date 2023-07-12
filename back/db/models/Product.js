@@ -33,10 +33,8 @@ module.exports = function (connection) {
             allowNull: false,
             validate: {
                 isFloat: true,
-                isNotNull: function (value) {
-                    if (value === null) {
-                        throw new Error("Price cannot be null");
-                    }
+                notNull: {
+                    msg: 'Price cannot be null'
                 },
             },
         },
