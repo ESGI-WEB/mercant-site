@@ -10,7 +10,7 @@ module.exports = function (Controller, options) {
     router.patch("/:id", Controller.patch);
     router.delete("/:id", Controller.delete);
 
-    //router.get("/:id/products", Controller.getProducts)
+    router.get("/:id/products", Controller.getProducts)
     router.post("/:id/product", Controller.addProduct)
     router.delete("/:id/product/:productId", Controller.removeProduct)
 

@@ -5,6 +5,23 @@ const { OrderDetails } = require("../db");
 const ValidationError = require("../errors/ValidationError");
 
 module.exports = {
+  findAll: async function (criteria, options = {}) {
+    return OrderDetails.findAll({
+      where: criteria,
+      ...options,
+      order: Object.entries(options.order || {}),
+    });
+  },
+  findById: async function (id) {
+    return OrderDetails.findByPk(id);
+  },
+  findByOrderId: async function (orderId) {
+    return OrderDetails.findAll({
+      where: {
+        order_id: orderId
+      }
+    });
+  },
   create: async function (orderId, productId, quantity) {
     try {
       const order = await Order.findByPk(orderId);

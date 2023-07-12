@@ -86,11 +86,35 @@ module.exports = function (OrderService, OrderDetailsService, ProductService) {
     },
     removeProduct: async (req, res, next) => {
       try {
+        // TO DO
+        // remove from total price
         const nbRemoved = await OrderDetailsService.remove({ productId: parseInt(req.params.productId) });
+
+
+
         res.sendStatus(nbRemoved ? 204 : 404);
       } catch (err) {
         next(err);
       }
     },
+    getProducts: async (req, res, next) => {
+      const {
+        _page = 1,
+        _itemsPerPage = 10,
+        _sort = {},
+        ...criteria
+      } = req.query;
+      try {
+        const orderDetails = await OrderDetailsService.findByOrderId(req.params.id);
+        const products = [];
+        for (const order of orderDetails) {
+          const product = await ProductService.findById(order.id);
+          products.push(product);
+        }
+        res.json(products);
+      } catch (err) {
+        next(err);
+      }
+    }
   };
 };
