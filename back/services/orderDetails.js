@@ -5,7 +5,7 @@ const { OrderDetails } = require("../db");
 const ValidationError = require("../errors/ValidationError");
 
 module.exports = {
-  create: async function (orderId, productId, quantity, currency) {
+  create: async function (orderId, productId, quantity) {
     try {
       const order = await Order.findByPk(orderId);
 

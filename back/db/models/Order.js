@@ -12,6 +12,15 @@ module.exports = function (connection) {
                 type: DataTypes.FLOAT,
                 defaultValue: 0
             },
+            currency: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                validate: {
+                    notNull: {
+                        msg: "Currency cannot be null",
+                    },
+                },
+            },
         },
         {
             underscored: true,

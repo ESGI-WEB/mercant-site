@@ -3,8 +3,8 @@ module.exports = function (Service) {
     post: async (req, res, next) => {
       try {
         const orderId = req.params.id;
-        const { ProductId, quantity, currency } = req.body;
-        const order = Service.create(orderId, ProductId, quantity, currency)
+        const { ProductId, quantity } = req.body;
+        const order = Service.create(orderId, ProductId, quantity)
         res.status(201).json(order);
       } catch (err) {
         next(err);
