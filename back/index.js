@@ -26,8 +26,7 @@ app.use(function (req, res, next) {
 
 app.use("/users", new GenericRouter(new GenericController(userService)));
 app.use("/products", new GenericRouter(new GenericController(productService)));
-app.use("/orders", new GenericRouter(new GenericController(orderService)));
-app.use("/orders", new OrderRouter(new OrderController(orderDetailsService)));
+app.use("/orders", new OrderRouter(new OrderController(orderService, orderDetailsService, productService)));
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {

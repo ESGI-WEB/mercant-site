@@ -8,7 +8,6 @@ module.exports = {
   create: async function (orderId, productId, quantity) {
     try {
       const order = await Order.findByPk(orderId);
-
       if (!order) {
         throw new Error('Specified order does not exist.');
       }
@@ -18,22 +17,23 @@ module.exports = {
         throw new Error('Specified product does not exist.');
       }
 
-      const orderDetails = new OrderDetails({
+      const orderDetails = {
         orderId: orderId,
         productId: productId,
         quantity: quantity,
-      });
+      };
 
-      const newTotalPrice = product.dataValues.price * quantity
-
-      await Order.increment({totalPrice: newTotalPrice}, { where: { id: orderId } });
-
-      return await OrderDetails.create(orderDetails.dataValues);
+      return await OrderDetails.create(orderDetails);
     } catch (e) {
       if (e instanceof Sequelize.ValidationError) {
         throw ValidationError.createFromSequelizeValidationError(e);
       }
       throw e;
     }
+  },
+  remove: async function (criteria) {
+    return OrderDetails.destroy({
+      where: criteria,
+    });
   },
 };
