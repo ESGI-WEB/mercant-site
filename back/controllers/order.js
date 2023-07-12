@@ -9,29 +9,29 @@ module.exports = function (OrderService, OrderDetailsService, ProductService) {
         ...criteria
       } = req.query;
       try {
-        const users = await OrderService.findAll(criteria, {
+        const orders = await OrderService.findAll(criteria, {
           offset: (_page - 1) * _itemsPerPage,
           limit: _itemsPerPage,
           order: _sort,
         });
-        res.json(users);
+        res.json(orders);
       } catch (err) {
         next(err);
       }
     },
     post: async (req, res, next) => {
       try {
-        const user = await OrderService.create(req.body);
-        res.status(201).json(user);
+        const order = await OrderService.create(req.body);
+        res.status(201).json(order);
       } catch (err) {
         next(err);
       }
     },
     get: async (req, res, next) => {
       try {
-        const user = await OrderService.findById(parseInt(req.params.id));
-        if (!user) return res.sendStatus(404);
-        res.json(user);
+        const order = await OrderService.findById(parseInt(req.params.id));
+        if (!order) return res.sendStatus(404);
+        res.json(order);
       } catch (err) {
         next(err);
       }
@@ -39,23 +39,23 @@ module.exports = function (OrderService, OrderDetailsService, ProductService) {
     put: async (req, res, next) => {
       try {
         const nbRemoved = await OrderService.remove({ id: parseInt(req.params.id) });
-        const user = await OrderService.create({
+        const order = await OrderService.create({
           id: parseInt(req.params.id),
           ...req.body,
         });
-        res.status(nbRemoved ? 200 : 201).json(user);
+        res.status(nbRemoved ? 200 : 201).json(order);
       } catch (err) {
         next(err);
       }
     },
     patch: async (req, res, next) => {
       try {
-        const [user] = await OrderService.update(
+        const [order] = await OrderService.update(
           { id: parseInt(req.params.id) },
           req.body
         );
-        if (!user) return res.sendStatus(404);
-        res.json(user);
+        if (!order) return res.sendStatus(404);
+        res.json(order);
       } catch (err) {
         next(err);
       }
@@ -70,7 +70,7 @@ module.exports = function (OrderService, OrderDetailsService, ProductService) {
     },
     addProduct: async (req, res, next) => {
       try {
-        const orderId = req.params.id;
+        const orderId = parseInt(req.params.id);
         const { ProductId, quantity } = req.body;
         const orderDetails = await OrderDetailsService.create(orderId, ProductId, quantity);
 
@@ -90,15 +90,15 @@ module.exports = function (OrderService, OrderDetailsService, ProductService) {
     },
     removeProduct: async (req, res, next) => {
       try {
-        const productId = req.params.productId;
-        const orderId = req.params.id;
-        const orderDetails = await OrderDetailsService.findByOrderIdAndProductId(orderId, productId);
+        const productId = parseInt(req.params.productId);
+        const orderId = parseInt(req.params.id);
+        const [ orderDetails ] = await OrderDetailsService.findByOrderIdAndProductId(orderId, productId);
         const nbRemoved = await OrderDetailsService.remove({ productId });
 
         if (nbRemoved) {
           const product = await ProductService.findById(productId)
           const order = await OrderService.findById(orderId);
-          const removeToPrice = product.price * orderDetails[0].quantity;
+          const removeToPrice = product.price * orderDetails.quantity;
           await order.decrement({ totalPrice: removeToPrice });
 
           res.sendStatus(204);

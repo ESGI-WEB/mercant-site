@@ -23,6 +23,13 @@ module.exports = {
       }
     });
   },
+  findByOrderId: async function (orderId, productId) {
+    return OrderDetails.findAll({
+      where: {
+        order_id: orderId,
+      }
+    });
+  },
   create: async function (orderId, productId, quantity) {
     try {
       const order = await Order.findByPk(orderId);
