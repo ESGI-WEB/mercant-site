@@ -72,27 +72,39 @@ module.exports = function (OrderService, OrderDetailsService, ProductService) {
       try {
         const orderId = req.params.id;
         const { ProductId, quantity } = req.body;
-        const orderDetails = OrderDetailsService.create(orderId, ProductId, quantity)
+        const orderDetails = await OrderDetailsService.create(orderId, ProductId, quantity);
 
-        const product = await ProductService.findById(ProductId)
-        const newTotalPrice = product.dataValues.price * quantity;
-        const order = await OrderService.findById(orderId);
-        await order.increment({totalPrice: newTotalPrice});
+        if (orderDetails) {
+          const product = await ProductService.findById(ProductId);
+          const addToPrice = product.price * quantity;
+          const order = await OrderService.findById(orderId);
+          await order.increment({ totalPrice: addToPrice });
 
-        res.status(201).json(orderDetails);
+          res.status(201).json(orderDetails);
+        } else {
+          res.status(404).json({ error: 'Order not found' });
+        }
       } catch (err) {
         next(err);
       }
     },
     removeProduct: async (req, res, next) => {
       try {
-        // TO DO
-        // remove from total price
-        const nbRemoved = await OrderDetailsService.remove({ productId: parseInt(req.params.productId) });
+        const productId = req.params.productId;
+        const orderId = req.params.id;
+        const orderDetails = await OrderDetailsService.findByOrderIdAndProductId(orderId, productId);
+        const nbRemoved = await OrderDetailsService.remove({ productId });
 
+        if (nbRemoved) {
+          const product = await ProductService.findById(productId)
+          const order = await OrderService.findById(orderId);
+          const removeToPrice = product.price * orderDetails[0].quantity;
+          await order.decrement({ totalPrice: removeToPrice });
 
-
-        res.sendStatus(nbRemoved ? 204 : 404);
+          res.sendStatus(204);
+        } else {
+          res.sendStatus(404);
+        }
       } catch (err) {
         next(err);
       }
@@ -106,11 +118,10 @@ module.exports = function (OrderService, OrderDetailsService, ProductService) {
       } = req.query;
       try {
         const orderDetails = await OrderDetailsService.findByOrderId(req.params.id);
-        const products = [];
-        for (const order of orderDetails) {
-          const product = await ProductService.findById(order.id);
-          products.push(product);
-        }
+        const productIds = orderDetails.map(order => order.productId);
+        const productPromises = productIds.map(productId => ProductService.findById(productId));
+        const products = await Promise.all(productPromises);
+
         res.json(products);
       } catch (err) {
         next(err);
