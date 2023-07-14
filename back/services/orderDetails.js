@@ -1,7 +1,5 @@
 const { Sequelize } = require("sequelize");
-const { Order } = require("../db");
-const { Product } = require("../db");
-const { OrderDetails } = require("../db");
+const { Order, Product, OrderDetails } = require("../db");
 const ValidationError = require("../errors/ValidationError");
 
 module.exports = {
@@ -23,7 +21,7 @@ module.exports = {
       }
     });
   },
-  findByOrderId: async function (orderId, productId) {
+  findByOrderId: async function (orderId) {
     return OrderDetails.findAll({
       where: {
         order_id: orderId,
