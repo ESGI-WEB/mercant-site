@@ -13,44 +13,35 @@ module.exports = function (connection) {
                 defaultValue: 0
             },
             currency: {
-                type: DataTypes.STRING,
+                type: DataTypes.ENUM("Euros", "Dollar"),
                 allowNull: false,
+                defaultValue: 'Euros',
                 validate: {
                     notNull: {
                         msg: "Currency cannot be null",
                     },
                 },
             },
+            status: {
+                type: DataTypes.ENUM('Draft', 'Canceled', 'Refund in progress', 'Refunded', 'Refund cancelled'),
+                defaultValue: 'Draft',
+                allowNull: false
+            },
+            refundId: {
+                type: DataTypes.INTEGER,
+                references: {
+                    model: 'refunds',
+                    key: 'id'
+                },
+                allowNull: true,
+            },
         },
         {
-            underscored: true,
             sequelize: connection,
+            underscored: true,
             tableName: "orders",
         }
     );
-
-    Order.belongsTo(User(connection), {
-        foreignKey: {
-            allowNull: false
-        }
-    });
-    User(connection).hasMany(Order, {
-        foreignKey: {
-            allowNull: false
-        }
-    });
-    Order.belongsToMany(Product(connection), {
-        through: OrderDetails(connection),
-        foreignKey: {
-            allowNull: false
-        }
-    });
-    Product(connection).belongsToMany(Order, {
-        through: OrderDetails(connection),
-        foreignKey: {
-            allowNull: false
-        }
-    });
 
     return Order;
 };

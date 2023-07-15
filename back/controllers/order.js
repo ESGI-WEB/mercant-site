@@ -1,6 +1,6 @@
 const GenericController = require("./genericCRUD");
 
-module.exports = function (OrderService, OrderDetailsService, ProductService) {
+module.exports = function (OrderService, OrderDetailsService, ProductService, RefundService) {
   const { cget, post, get, put, patch, delete: deleteMethod } = GenericController(OrderService);
   return {
     cget,
@@ -80,6 +80,56 @@ module.exports = function (OrderService, OrderDetailsService, ProductService) {
         const products = await Promise.all(productPromises);
 
         res.json(products);
+      } catch (err) {
+        next(err);
+      }
+    },
+    getRefund: async (req, res, next) => {
+      try {
+        const orderId = parseInt(req.params.id);
+
+        if (isNaN(orderId)) {
+          return res.status(400).json({ error: 'Invalid input' });
+        }
+
+        const order = await OrderService.findById(orderId);
+        const refundId = order.refundId;
+        const refund = await RefundService.findById(refundId);
+
+        res.json(refund);
+      } catch (err) {
+        next(err);
+      }
+    },
+    addRefund: async (req, res, next) => {
+      try {
+        const orderId = parseInt(req.params.id);
+
+        if (isNaN(orderId)) {
+          return res.status(400).json({ error: 'Invalid input' });
+        }
+
+        const refundObject = {
+          totalRefund: req.body.totalRefund,
+          amountRefunded: req.body.amountRefunded,
+          status: req.body.status
+        };
+
+        const refund = await RefundService.create(refundObject);
+
+        if (refund) {
+          await OrderService.update(
+            {
+              id: orderId
+            },
+            {
+              refundId: refund.id
+            }
+          );
+          return res.status(201).json(refund);
+        } else {
+          return res.status(404).json({ error: 'Refund not found' });
+        }
       } catch (err) {
         next(err);
       }

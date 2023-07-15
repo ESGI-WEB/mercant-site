@@ -11,7 +11,7 @@ module.exports = function (Service) {
         const datas = await Service.findAll(criteria, {
           offset: (_page - 1) * _itemsPerPage,
           limit: _itemsPerPage,
-          order: _sort,
+          data: _sort,
         });
         res.json(datas);
       } catch (err) {

@@ -20,14 +20,16 @@ module.exports = function (connection) {
             references: {
                 model: 'orders',
                 key: 'id'
-            }
+            },
+            allowNull: false,
         },
         productId: {
             type: DataTypes.INTEGER,
             references: {
                 model: 'products',
                 key: 'id'
-            }
+            },
+            allowNull: false,
         },
     }, {
         sequelize: connection,

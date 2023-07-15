@@ -40,6 +40,16 @@ module.exports = function (connection) {
                     },
                 },
             },
+            role: {
+                type: DataTypes.ENUM('Customer', 'Administrator'),
+                allowNull: false,
+                defaultValue: 'Customer',
+                validate: {
+                    notNull: {
+                        msg: 'Role cannot be null'
+                    },
+                },
+            }
         },
         {
             underscored: true,
