@@ -9,5 +9,6 @@ module.exports = function (Controller, options) {
   router.put("/:id", Controller.put);
   router.patch("/:id", Controller.patch);
   router.delete("/:id", Controller.delete);
+
   return router;
 };

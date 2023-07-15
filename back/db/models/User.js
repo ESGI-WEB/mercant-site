@@ -25,10 +25,8 @@ module.exports = function (connection) {
                 allowNull: false,
                 validate: {
                     isEmail: true,
-                    isNotNull: function (value) {
-                        if (value === null) {
-                            throw new Error("Email cannot be null");
-                        }
+                    notNull: {
+                        msg: 'Email cannot be null'
                     },
                 },
             },
@@ -37,16 +35,24 @@ module.exports = function (connection) {
                 allowNull: false,
                 validate: {
                     min: 8,
-                    isNotNull: function (value) {
-                        if (value === null) {
-                            throw new Error("Password cannot be null");
-                        }
+                    notNull: {
+                        msg: 'Password cannot be null'
                     },
-
                 },
             },
+            role: {
+                type: DataTypes.ENUM('Customer', 'Administrator'),
+                allowNull: false,
+                defaultValue: 'Customer',
+                validate: {
+                    notNull: {
+                        msg: 'Role cannot be null'
+                    },
+                },
+            }
         },
         {
+            underscored: true,
             sequelize: connection,
             tableName: "users",
         }
