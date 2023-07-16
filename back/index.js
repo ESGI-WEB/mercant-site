@@ -1,16 +1,22 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
+
 const GenericRouter = require("./routes/genericCRUD");
+const SecurityRouter = require("./routes/security");
 const OrderRouter = require("./routes/order");
+
 const GenericController = require("./controllers/genericCRUD");
 const OrderController = require("./controllers/order");
+
 const userService = require("./services/user");
 const productService = require("./services/product");
 const refundService = require("./services/refund");
 const orderService = require("./services/order");
 const orderDetailsService = require("./services/orderDetails");
+
 const errorHandler = require("./middlewares/errorHandler");
-const cors = require("cors");
+const checkAuth = require("./middlewares/check-auth");
 
 app.use(express.json());
 app.use(cors());
@@ -24,9 +30,10 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.use("/users", new GenericRouter(new GenericController(userService)));
-app.use("/products", new GenericRouter(new GenericController(productService)));
-app.use("/orders", new OrderRouter(new OrderController(orderService, orderDetailsService, productService, refundService)));
+app.use("/", new SecurityRouter(userService));
+app.use("/users", checkAuth('Administrator'), new GenericRouter(new GenericController(userService)));
+app.use("/products", checkAuth(), new GenericRouter(new GenericController(productService)));
+app.use("/orders", checkAuth(), new OrderRouter(new OrderController(orderService, orderDetailsService, productService, refundService)));
 
 app.use(errorHandler);
 

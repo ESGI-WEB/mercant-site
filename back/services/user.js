@@ -1,6 +1,7 @@
 const { Sequelize } = require("sequelize");
-const { User } = require("../db");
+const { User, OrderDetails} = require("../db");
 const ValidationError = require("../errors/ValidationError");
+const e = require("express");
 
 module.exports = {
   findAll: async function (criteria, options = {}) {
@@ -12,6 +13,13 @@ module.exports = {
   },
   findById: async function (id) {
     return User.findByPk(id);
+  },
+  findByEmail: async function (email) {
+    return User.findOne({
+      where: {
+        email,
+      }
+    });
   },
   create: async function (data) {
     try {

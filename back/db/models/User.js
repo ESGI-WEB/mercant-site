@@ -2,14 +2,21 @@ const {Model, DataTypes} = require("sequelize");
 
 module.exports = function (connection) {
     class User extends Model {
+
+        static roles = ["Customer", "Administrator"];
+
         async checkPassword(password) {
             const bcrypt = require("bcryptjs");
             return bcrypt.compare(password, this.password);
         }
 
-        generateToken() {
+        async generateToken() {
             const jwt = require("jsonwebtoken");
-            return jwt.sign({id: this.id}, process.env.JWT_SECRET, {
+            return jwt.sign({
+                id: this.id,
+                email: this.email,
+                role: this.role,
+            }, process.env.JWT_SECRET, {
                 expiresIn: "1d",
             });
         }
@@ -34,21 +41,28 @@ module.exports = function (connection) {
                 type: DataTypes.STRING,
                 allowNull: false,
                 validate: {
-                    min: 8,
                     notNull: {
                         msg: 'Password cannot be null'
+                    },
+                    // check if password contains at least 8 characters, 1 uppercase letter, 1 lowercase letter and 1 number
+                    is: function (value) {
+                        if (!value.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)) {
+                            throw new Error("Password must contain at least 8 characters, 1 uppercase letter, 1 lowercase letter and 1 number, and 1 special character among @, $, !, %, *, ?, &");
+                        }
                     },
                 },
             },
             role: {
-                type: DataTypes.ENUM('Customer', 'Administrator'),
+                type: DataTypes.ENUM(...User.roles),
                 allowNull: false,
                 defaultValue: 'Customer',
                 validate: {
-                    notNull: {
-                        msg: 'Role cannot be null'
+                    isIn: function (value) {
+                        if (!User.roles.includes(value)) {
+                            throw new Error(`Role must be one of ${User.roles.join(", ")}`);
+                        }
                     },
-                },
+                }
             }
         },
         {

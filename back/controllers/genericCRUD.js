@@ -19,6 +19,7 @@ module.exports = function (Service) {
       }
     },
     post: async (req, res, next) => {
+      console.log('req', req.body)
       try {
         const data = await Service.create(req.body);
         res.status(201).json(data);

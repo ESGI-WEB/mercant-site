@@ -4,7 +4,10 @@ const Product = require("./Product")
 const OrderDetails = require('./OrderDetails')
 
 module.exports = function (connection) {
-    class Order extends Model {}
+    class Order extends Model {
+        static currencies = ["EUR", "USD", "CHF", "GBP"];
+        static statuses = ["Draft", "Canceled", "Refund in progress", "Refunded", "Refund cancelled"];
+    }
 
     Order.init(
         {
@@ -13,19 +16,28 @@ module.exports = function (connection) {
                 defaultValue: 0
             },
             currency: {
-                type: DataTypes.ENUM("Euros", "Dollar"),
+                type: DataTypes.ENUM(...Order.currencies),
                 allowNull: false,
-                defaultValue: 'Euros',
+                defaultValue: 'EUR',
                 validate: {
-                    notNull: {
-                        msg: "Currency cannot be null",
+                    isIn: function (value) {
+                        if (!Order.currencies.includes(value)) {
+                            throw new Error(`Currency must be one of ${Order.currencies.join(", ")}`);
+                        }
                     },
-                },
+                }
             },
             status: {
-                type: DataTypes.ENUM('Draft', 'Canceled', 'Refund in progress', 'Refunded', 'Refund cancelled'),
+                type: DataTypes.ENUM(...Order.statuses),
                 defaultValue: 'Draft',
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    isIn: function (value) {
+                        if (!Order.statuses.includes(value)) {
+                            throw new Error(`Status must be one of ${Order.statuses.join(", ")}`);
+                        }
+                    },
+                }
             },
             refundId: {
                 type: DataTypes.INTEGER,
