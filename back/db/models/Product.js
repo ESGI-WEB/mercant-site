@@ -9,20 +9,22 @@ module.exports = function (connection) {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          max: 100,
+          len: [1, 100],
           notNull: {
             msg: "Title cannot be null",
           },
+          notEmpty: true,
         },
       },
       description: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          max: 400,
+          len: [1, 400],
           notNull: {
             msg: "Description cannot be null",
           },
+          notEmpty: true,
         },
       },
       image: {
@@ -31,11 +33,8 @@ module.exports = function (connection) {
       price: {
         type: DataTypes.FLOAT,
         allowNull: false,
-        validate: {
-          isFloat: true,
-          notNull: {
-            msg: "Price cannot be null",
-          },
+        isDecimal: {
+          msg: "Price must be a valid decimal number",
         },
       },
     },
