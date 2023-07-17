@@ -4,7 +4,7 @@ const checkAuth = require("../middlewares/check-auth");
 module.exports = function (Controller, options) {
   const router = Router();
 
-  router.get("/", Controller.cget);
+  router.get("/", checkAuth('Administrator'), Controller.cget);
   router.post("/", Controller.post);
   router.get("/:id", Controller.get);
   router.put("/:id", Controller.put);
