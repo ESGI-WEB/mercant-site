@@ -1,5 +1,5 @@
 const { Sequelize } = require("sequelize");
-const { User, OrderDetails} = require("../db");
+const { User, OrderDetails } = require("../db");
 const ValidationError = require("../errors/ValidationError");
 const e = require("express");
 
@@ -18,7 +18,7 @@ module.exports = {
     return User.findOne({
       where: {
         email,
-      }
+      },
     });
   },
   create: async function (data) {

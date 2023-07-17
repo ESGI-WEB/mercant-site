@@ -13,8 +13,8 @@ module.exports = function (userService) {
       }
 
       res.json({ token: await user.generateToken() });
-    } catch(error) {
-      next(error)
+    } catch (error) {
+      next(error);
     }
   });
 
@@ -31,7 +31,7 @@ module.exports = function (userService) {
       const newUser = await userService.create({ firstname, lastname, email, password });
       res.status(201).json({ token: await newUser.generateToken() });
     } catch (error) {
-      next(error)
+      next(error);
     }
   });
 

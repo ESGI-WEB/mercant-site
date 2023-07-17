@@ -2,14 +2,14 @@
 
 Il suffit de lancer la commande suivante :
 
-````bash
+```bash
 docker-compose up -d
-````
+```
 
 # Migration
 
 Depuis le container server, lancer la commande suivante pour migrer la db :
 
-````bash
+```bash
 node migrate.js
-````
+```

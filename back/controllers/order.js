@@ -15,7 +15,7 @@ module.exports = function (OrderService, OrderDetailsService, ProductService, Re
         const { ProductId, quantity } = req.body;
 
         if (isNaN(orderId) || isNaN(ProductId) || isNaN(quantity)) {
-          return res.status(400).json({ error: 'Invalid input' });
+          return res.status(400).json({ error: "Invalid input" });
         }
 
         const orderDetails = await OrderDetailsService.create(orderId, ProductId, quantity);
@@ -28,7 +28,7 @@ module.exports = function (OrderService, OrderDetailsService, ProductService, Re
 
           return res.status(201).json(orderDetails);
         } else {
-          return res.status(404).json({ error: 'Order not found' });
+          return res.status(404).json({ error: "Order not found" });
         }
       } catch (err) {
         next(err);
@@ -40,7 +40,7 @@ module.exports = function (OrderService, OrderDetailsService, ProductService, Re
         const orderId = parseInt(req.params.id);
 
         if (isNaN(productId) || isNaN(orderId)) {
-          return res.status(400).json({ error: 'Invalid input' });
+          return res.status(400).json({ error: "Invalid input" });
         }
 
         const [orderDetails] = await OrderDetailsService.findByOrderIdAndProductId(orderId, productId);
@@ -71,7 +71,7 @@ module.exports = function (OrderService, OrderDetailsService, ProductService, Re
         const orderId = parseInt(req.params.id);
 
         if (isNaN(orderId)) {
-          return res.status(400).json({ error: 'Invalid input' });
+          return res.status(400).json({ error: "Invalid input" });
         }
 
         const orderDetails = await OrderDetailsService.findByOrderId(orderId);
@@ -89,7 +89,7 @@ module.exports = function (OrderService, OrderDetailsService, ProductService, Re
         const orderId = parseInt(req.params.id);
 
         if (isNaN(orderId)) {
-          return res.status(400).json({ error: 'Invalid input' });
+          return res.status(400).json({ error: "Invalid input" });
         }
 
         const order = await OrderService.findById(orderId);
@@ -106,13 +106,13 @@ module.exports = function (OrderService, OrderDetailsService, ProductService, Re
         const orderId = parseInt(req.params.id);
 
         if (isNaN(orderId)) {
-          return res.status(400).json({ error: 'Invalid input' });
+          return res.status(400).json({ error: "Invalid input" });
         }
 
         const refundObject = {
           totalRefund: req.body.totalRefund,
           amountRefunded: req.body.amountRefunded,
-          status: req.body.status
+          status: req.body.status,
         };
 
         const refund = await RefundService.create(refundObject);
@@ -120,19 +120,19 @@ module.exports = function (OrderService, OrderDetailsService, ProductService, Re
         if (refund) {
           await OrderService.update(
             {
-              id: orderId
+              id: orderId,
             },
             {
-              refundId: refund.id
+              refundId: refund.id,
             }
           );
           return res.status(201).json(refund);
         } else {
-          return res.status(404).json({ error: 'Refund not found' });
+          return res.status(404).json({ error: "Refund not found" });
         }
       } catch (err) {
         next(err);
       }
-    }
+    },
   };
 };
