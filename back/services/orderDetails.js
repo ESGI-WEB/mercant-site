@@ -17,27 +17,27 @@ module.exports = {
     return OrderDetails.findAll({
       where: {
         order_id: orderId,
-        product_id: productId
-      }
+        product_id: productId,
+      },
     });
   },
   findByOrderId: async function (orderId) {
     return OrderDetails.findAll({
       where: {
         order_id: orderId,
-      }
+      },
     });
   },
   create: async function (orderId, productId, quantity) {
     try {
       const order = await Order.findByPk(orderId);
       if (!order) {
-        throw new Error('Specified order does not exist.');
+        throw new Error("Specified order does not exist.");
       }
 
       const product = await Product.findByPk(productId);
       if (!product) {
-        throw new Error('Specified product does not exist.');
+        throw new Error("Specified product does not exist.");
       }
 
       const orderDetails = {
