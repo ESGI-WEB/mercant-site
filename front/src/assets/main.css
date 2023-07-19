@@ -3,9 +3,20 @@
   margin: 0;
   padding: 0;
   font-size: 16px;
+  font-family: Mark-Book;
 }
 
-/*@font-face {
-  font-family: logo;
-  src: url("../assets/fonts/Roboto-Regular.ttf");
-}*/
+@font-face {
+  font-family: Mark-Book;
+  src: url("../assets/fonts/Mark-Book.ttf");
+}
+
+@font-face {
+  font-family: Mark-Light;
+  src: url("../assets/fonts/Mark-Light.ttf");
+}
+
+@font-face {
+  font-family: Mark-Thin;
+  src: url("../assets/fonts/Mark-Thin.ttf");
+}
