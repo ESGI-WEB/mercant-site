@@ -4,16 +4,10 @@ const Product = require("./Product");
 const OrderDetails = require("./OrderDetails");
 
 module.exports = function (connection) {
-  class Order extends Model {
-    static currencies = ["EUR", "USD", "CHF", "GBP"];
-    static statuses = [
-      "Draft",
-      "Canceled",
-      "Refund in progress",
-      "Refunded",
-      "Refund cancelled",
-    ];
-  }
+    class Order extends Model {
+        static currencies = ["EUR", "USD", "CHF", "GBP"];
+        static statuses = ["Draft", "Canceled", "Refund in progress", "Refunded", "Refund cancelled"];
+    }
 
   Order.init(
     {

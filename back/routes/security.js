@@ -22,6 +22,12 @@ module.exports = function (userService) {
     const { firstname, lastname, email, password } = req.body;
 
     try {
+      const existingUser = await userService.findByEmail(email);
+
+      if (existingUser) {
+        return res.sendStatus(409);
+      }
+
       const newUser = await userService.create({ firstname, lastname, email, password });
       res.status(201).json({ token: await newUser.generateToken() });
     } catch (error) {
