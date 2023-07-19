@@ -1,7 +1,6 @@
 const { Sequelize } = require("sequelize");
 const { Product } = require("../db");
 const ValidationError = require("../errors/ValidationError");
-const e = require("express");
 
 module.exports = {
   findAll: async function (criteria, options = {}) {
