@@ -7,11 +7,6 @@ module.exports = function (userService) {
     const { email, password } = req.body;
     try {
       const user = await userService.findByEmail(email);
-
-      if (!user || !user.checkPassword(password)) {
-        return res.sendStatus(401);
-      }
-
       res.json({ token: await user.generateToken() });
     } catch (error) {
       next(error);
