@@ -19,7 +19,7 @@
 
 <script setup>
 import { reactive } from "vue";
-import { getProducts } from '../services/product';
+import { findProductsByCriteria } from '../services/product';
 
 const formData = reactive({
     title: "",
@@ -29,7 +29,18 @@ const formData = reactive({
 
 async function search() {
     try {
-        this.products = await getProducts();
+        const criteria = {};
+        if (formData.title.trim() !== "") {
+            criteria.title = formData.title.trim();
+        }
+        if (formData.priceMin.trim() !== "") {
+            criteria.priceMin = formData.priceMin.trim();
+        }
+        if (formData.priceMax.trim() !== "") {
+            criteria.priceMax = formData.priceMax.trim();
+        }
+
+        this.products = await findProductsByCriteria(criteria);
     } catch (error) {
         console.error('Error on getting products :', error);
     }

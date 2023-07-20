@@ -1,8 +1,9 @@
 const API_BASE_URL = 'http://localhost:3002';
 
-export async function getProducts() {
+export async function findProductsByCriteria(criteria) {
     try {
-        const response = await fetch(`${API_BASE_URL}/products`, {
+        const queryParams = new URLSearchParams(criteria).toString();
+        const response = await fetch(`${API_BASE_URL}/products?${queryParams}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -14,8 +15,7 @@ export async function getProducts() {
             throw new Error(`Request failed with status ${response.status} ${response.statusText}`);
         }
 
-        const data = await response.json();
-        return data;
+        return await response.json();
     } catch (error) {
         return Promise.reject(error);
     }
