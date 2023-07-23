@@ -53,7 +53,6 @@ module.exports = function (ProductService) {
         const product = await ProductService.findById(productId);
         if (product) {
           const filename = product.image.split('/images/')[1];
-          console.log(filename);
           fs.unlink(`images/${filename}`, async (error) => {
             if (error) {
               throw new Error('Failed to delete image file');

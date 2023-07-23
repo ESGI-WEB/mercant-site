@@ -27,23 +27,23 @@ function handleSubmit() {
 </script>
 
 <template>
-        <form @submit.prevent="handleSubmit">
-            <div class="login">
-                <p class="title">Already a customer?</p>
-                <input v-model.trim="formData.email" type="email" id="email" name="email" placeholder="Email" />
-                <p v-if="errors.email">{{ errors.email }}</p>
-                <input
-                        :value="formData.password"
-                        @input="formData.password = $event.target.value"
-                        type="password"
-                        id="password"
-                        name="password"
-                        placeholder="Password"
-                />
-                <p v-if="errors.password">{{ errors.password }}</p>
-                <button :disabled="isSubmitting" type="submit">Submit</button>
-            </div>
-        </form>
+    <form @submit.prevent="handleSubmit">
+        <div class="login">
+            <p class="title">Already a customer?</p>
+            <input v-model.trim="formData.email" type="email" id="email" name="email" placeholder="Email" />
+            <p v-if="errors.email">{{ errors.email }}</p>
+            <input
+                    :value="formData.password"
+                    @input="formData.password = $event.target.value"
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Password"
+            />
+            <p v-if="errors.password">{{ errors.password }}</p>
+            <button :disabled="isSubmitting" type="submit">Submit</button>
+        </div>
+    </form>
 
 </template>
 

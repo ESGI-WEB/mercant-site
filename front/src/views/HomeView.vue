@@ -15,17 +15,30 @@
             <button class="searchButton" type="submit">Search</button>
         </div>
     </form>
+    <div class="products" v-if="products.length > 0">
+        <div class="card" v-for="product in products" :key="product.id">
+            <ProductCard :product="product" />
+        </div>
+    </div>
+
+    <div v-else>
+        No products to display.
+    </div>
+
 </template>
 
 <script setup>
-import { reactive } from "vue";
+import {reactive, ref} from "vue";
 import { findProductsByCriteria } from '../services/product';
+import ProductCard from "../components/ProductCard.vue";
 
 const formData = reactive({
     title: "",
-    priceMin: "",
-    priceMax: ""
+    priceMin: null,
+    priceMax: null
 });
+
+const products = ref([]);
 
 async function search() {
     try {
@@ -33,14 +46,16 @@ async function search() {
         if (formData.title.trim() !== "") {
             criteria.title = formData.title.trim();
         }
-        if (formData.priceMin.trim() !== "") {
-            criteria.priceMin = formData.priceMin.trim();
+        if (formData.priceMax != null){
+            criteria.priceMax = formData.priceMax;
         }
-        if (formData.priceMax.trim() !== "") {
-            criteria.priceMax = formData.priceMax.trim();
+        if (formData.priceMin != null){
+            criteria.priceMin = formData.priceMin;
         }
-
-        this.products = await findProductsByCriteria(criteria);
+        products.value = await findProductsByCriteria(criteria);
+        formData.priceMin = null;
+        formData.priceMax = null;
+        formData.title = "";
     } catch (error) {
         console.error('Error on getting products :', error);
     }
@@ -121,5 +136,17 @@ input:focus {
 
 .searchButton:hover {
     cursor: pointer;
+}
+
+.products {
+    padding: 30px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.card {
+    width: calc(33.33% - 20px);
 }
 </style>
