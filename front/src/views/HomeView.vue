@@ -16,8 +16,8 @@
         </div>
     </form>
     <div class="products" v-if="products.length > 0">
-        <div class="card" v-for="product in products" :key="product.id">
-            <ProductCard :product="product" />
+        <div class="product-card" v-for="product in products" :key="product.id">
+            <ProductCard @click="handleProductClicked(product)" :product="product" />
         </div>
     </div>
 
@@ -31,6 +31,7 @@
 import {reactive, ref} from "vue";
 import { findProductsByCriteria } from '../services/product';
 import ProductCard from "../components/ProductCard.vue";
+import router from "../router";
 
 const formData = reactive({
     title: "",
@@ -52,6 +53,10 @@ async function search() {
         if (formData.priceMin != null){
             criteria.priceMin = formData.priceMin;
         }
+        if (formData.priceMin != null && formData.priceMax != null && formData.priceMin >= formData.priceMax) {
+            console.error('Minimum price must be less than maximum price.');
+            return;
+        }
         products.value = await findProductsByCriteria(criteria);
         formData.priceMin = null;
         formData.priceMax = null;
@@ -60,6 +65,11 @@ async function search() {
         console.error('Error on getting products :', error);
     }
 }
+
+function handleProductClicked(product){
+    router.push({ name: 'ProductDetailsCard', params: { id: product.id } });
+}
+
 </script>
 
 <style scoped>
@@ -146,7 +156,8 @@ input:focus {
     gap: 30px;
 }
 
-.card {
+.product-card {
     width: calc(33.33% - 20px);
 }
+
 </style>

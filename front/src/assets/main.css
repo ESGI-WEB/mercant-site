@@ -20,3 +20,8 @@
   font-family: Mark-Thin;
   src: url("../assets/fonts/Mark-Thin.ttf");
 }
+
+@font-face {
+  font-family: Mark-Bold;
+  src: url("../assets/fonts/Mark-Book.ttf");
+}

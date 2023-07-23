@@ -1,15 +1,22 @@
 const API_BASE_URL = 'http://localhost:3002';
 
-export async function findProductsByCriteria(criteria) {
+async function makeRequest(url, method = 'GET', data = null) {
     try {
-        const queryParams = new URLSearchParams(criteria).toString();
-        const response = await fetch(`${API_BASE_URL}/products?${queryParams}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-        });
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        };
+
+        const options = {
+            method,
+            headers,
+        };
+
+        if (data) {
+            options.body = JSON.stringify(data);
+        }
+
+        const response = await fetch(url, options);
 
         if (!response.ok) {
             throw new Error(`Request failed with status ${response.status} ${response.statusText}`);
@@ -19,4 +26,15 @@ export async function findProductsByCriteria(criteria) {
     } catch (error) {
         return Promise.reject(error);
     }
+}
+
+export async function findProductsByCriteria(criteria) {
+    const queryParams = new URLSearchParams(criteria).toString();
+    const url = `${API_BASE_URL}/products?${queryParams}`;
+    return makeRequest(url);
+}
+
+export async function findProductById(productId) {
+    const url = `${API_BASE_URL}/products/${productId}`;
+    return makeRequest(url);
 }
