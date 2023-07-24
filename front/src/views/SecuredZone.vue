@@ -1,35 +1,35 @@
 <script setup>
-import { inject, onMounted, provide, ref } from 'vue';
-import { userKey, logoutKey } from '../services/authKeys';
-import { RouterLink, RouterView } from "vue-router";
-import { createOrder, findOrdersByCriteria, findProductsByOrderId } from "../services/order";
+import {inject, onMounted, provide, ref} from 'vue';
+import {logoutKey, userKey} from '../services/authKeys';
+import {RouterLink, RouterView} from "vue-router";
+import {createOrder, findOrdersByCriteria, findProductsByOrderId} from "../services/order";
+import store from "../store/store";
 
 const user = inject(userKey);
 const logout = inject(logoutKey);
-const numberOfProducts = ref(0);
 const orders = ref([]);
 
 onMounted(async () => {
-    if (user.value != null && user.value.id != null) {
+    if (user.value != null && user.value.id != null && orders.value != null) {
         const orderCriteria = {};
         orderCriteria.user_id = user.value.id;
         orderCriteria.status = "Draft";
-        orders.value = await findOrdersByCriteria(orderCriteria);
+        [ orders.value ] = await findOrdersByCriteria(orderCriteria);
         if (orders.value.length === 0) {
             const orderData = {}
             orderData.userId = user.value.id;
             orderData.currency = "EUR";
             orderData.status = "Draft";
             await createOrder(orderData);
-            numberOfProducts.value = 0;
+            store.numberOfProductsInCart = 0;
         } else {
-            const products = await findProductsByOrderId(orders.value[0].id);
-            numberOfProducts.value = products.length;
+            const products = await findProductsByOrderId(orders.value.id);
+            store.numberOfProductsInCart = products.reduce((accumulator, product) => accumulator + product.quantity, 0);
         }
     }
 });
 
-provide('orders', orders);
+provide('order', orders);
 </script>
 
 <template>
@@ -48,7 +48,7 @@ provide('orders', orders);
                 <RouterLink to="/user">Users</RouterLink>
             </template>
             <RouterLink v-if="user" to="/order">
-                <div class="quantity">{{ numberOfProducts }}</div>
+                <div class="quantity">{{ store.numberOfProductsInCart }}</div>
                 <div class="basket-icon">
                     <span class="material-symbols-outlined">shopping_basket</span>
                 </div>

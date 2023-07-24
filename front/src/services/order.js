@@ -48,3 +48,18 @@ export async function addProductToCart(orderId, product) {
     const url = `${API_BASE_URL}/orders/${orderId}/product`;
     return makeRequest(url, 'POST', product);
 }
+
+export async function getOrderProducts(orderId) {
+    const url = `${API_BASE_URL}/orders/${orderId}/products`;
+    return makeRequest(url);
+}
+
+export async function findOrderById(orderId) {
+    const url = `${API_BASE_URL}/orders/${orderId}`;
+    return makeRequest(url, 'POST', orderId);
+}
+
+export async function editQuantityOrderProduct(orderId, productId, quantity) {
+    const url = `${API_BASE_URL}/orders/${orderId}/product/${productId}`;
+    return makeRequest(url, 'PATCH', quantity);
+}

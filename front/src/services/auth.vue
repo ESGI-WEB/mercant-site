@@ -5,6 +5,7 @@
 <script setup>
     import { onMounted, provide, ref } from 'vue';
     import { userKey, loginKey, logoutKey, registerKey } from './authKeys';
+    import router from "../router";
 
     const API_BASE_URL = 'http://localhost:3002';
 
@@ -45,6 +46,7 @@
     function logout() {
         localStorage.removeItem('token');
         user.value = null;
+        router.push({ name: 'home' });
     }
 
     async function register(userData) {
