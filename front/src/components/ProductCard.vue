@@ -25,6 +25,7 @@ const props = defineProps(['product']);
 </script>
 
 <style scoped>
+
 .card {
     display: flex;
     flex-direction: column;

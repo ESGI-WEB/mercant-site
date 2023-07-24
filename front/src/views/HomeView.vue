@@ -158,6 +158,7 @@ input:focus {
 
 .product-card {
     width: calc(33.33% - 20px);
+    cursor: pointer;
 }
 
 </style>
