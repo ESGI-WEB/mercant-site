@@ -21,14 +21,14 @@
         </div>
     </div>
 
-    <div v-else>
+    <div class="else-products" v-else>
         No products to display.
     </div>
 
 </template>
 
 <script setup>
-import {reactive, ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import { findProductsByCriteria } from '../services/product';
 import ProductCard from "../components/ProductCard.vue";
 import router from "../router";
@@ -40,6 +40,11 @@ const formData = reactive({
 });
 
 const products = ref([]);
+
+onMounted(async () => {
+    const criteria = {}
+    products.value = await findProductsByCriteria(criteria);
+});
 
 async function search() {
     try {
@@ -159,6 +164,11 @@ input:focus {
 .product-card {
     width: calc(33.33% - 20px);
     cursor: pointer;
+}
+
+.else-products {
+    font-size: 1.2rem;
+    padding: 30px;
 }
 
 </style>

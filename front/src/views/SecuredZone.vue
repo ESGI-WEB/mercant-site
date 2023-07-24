@@ -40,7 +40,7 @@ provide('order', orders)
     <div class="order">
       <RouterLink to="/">Purchase</RouterLink>
       <RouterLink to="/location">Renting</RouterLink>
-      <RouterLink to="/order">Orders</RouterLink>
+      <RouterLink to="/cart">Orders</RouterLink>
     </div>
     <div class="logo">YachtMasters</div>
     <div class="account">
@@ -48,7 +48,7 @@ provide('order', orders)
         <RouterLink to="/products">Products</RouterLink>
         <RouterLink to="/user">Users</RouterLink>
       </template>
-      <RouterLink v-if="user" to="/order">
+        <RouterLink v-if="user && orders" :to="'/cart/' + orders.id">
         <div class="quantity">{{ store.numberOfProductsInCart }}</div>
         <div class="basket-icon">
           <span class="material-symbols-outlined">shopping_basket</span>

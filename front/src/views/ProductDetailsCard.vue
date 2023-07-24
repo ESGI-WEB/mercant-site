@@ -11,23 +11,15 @@
           <div class="add-button">
             <button type="button" @click="addToCart('add')">+</button>
           </div>
-          <div>
-            <input
-              class="input-quantity"
-              v-model.number="quantity"
-              type="number"
-              id="quantity"
-              name="quantity"
-              disabled="disabled"
-              placeholder="Add to cart"
-            />
+          <div class="input-quantity">
+              {{ quantity }}
           </div>
           <div class="add-button">
             <button type="button" @click="addToCart('remove')">-</button>
           </div>
         </div>
       </div>
-      <div class="price">{{ product.price }}</div>
+      <div class="price-product">{{ product.price }} EUR</div>
     </div>
   </div>
 </template>
@@ -90,14 +82,13 @@ async function addToCart(action) {
         store.numberOfProductsInCart += productQuantityChange;
         quantity.value += productQuantityChange;
     } else if (!isRemovingProduct) {
+        quantity.value += 1;
         const productData = {
             ProductId: productId.value,
             quantity: quantity.value,
         };
-
         await addProductToCart(order.value.id, productData);
         store.numberOfProductsInCart += 1;
-        quantity.value += 1;
     }
 }
 </script>
@@ -143,8 +134,11 @@ async function addToCart(action) {
   font-size: 1.5rem;
 }
 
-.price {
+.price-product {
   width: 20%;
+  text-align: center;
+  border: 1px solid black;
+  border-radius: 20px;
 }
 
 .basket {
@@ -161,9 +155,9 @@ async function addToCart(action) {
   cursor: pointer;
   color: white;
   font-weight: bold;
-  width: 28px;
+  width: 40px;
   height: 28px;
-  border-radius: 50%;
+  border-radius: 5px;
 }
 
 .add-button button:hover {
@@ -175,10 +169,8 @@ input:focus {
 }
 
 .input-quantity {
-  text-align: center;
-  border: 0;
-    width: 50px;
   color: black;
-  background: transparent;
+  width: 50px;
+  text-align: center;
 }
 </style>

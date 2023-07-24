@@ -60,7 +60,7 @@ export async function getOrderProducts(orderId) {
 
 export async function findOrderById(orderId) {
     const url = `${API_BASE_URL}/orders/${orderId}`;
-    return makeRequest(url, 'POST', orderId);
+    return makeRequest(url);
 }
 
 export async function editQuantityOrderProduct(orderId, productId, quantity) {
