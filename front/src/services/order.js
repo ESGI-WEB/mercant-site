@@ -22,6 +22,10 @@ async function makeRequest(url, method = 'GET', data = null) {
             throw new Error(`Request failed with status ${response.status} ${response.statusText}`);
         }
 
+        if (method === 'DELETE') {
+            return null;
+        }
+
         return await response.json();
     } catch (error) {
         return Promise.reject(error);
@@ -62,4 +66,9 @@ export async function findOrderById(orderId) {
 export async function editQuantityOrderProduct(orderId, productId, quantity) {
     const url = `${API_BASE_URL}/orders/${orderId}/product/${productId}`;
     return makeRequest(url, 'PATCH', quantity);
+}
+
+export async function removeOrderProduct(orderId, productId) {
+    const url = `${API_BASE_URL}/orders/${orderId}/product/${productId}`;
+    return makeRequest(url, 'DELETE');
 }
