@@ -28,7 +28,7 @@
 </template>
 
 <script setup>
-import {onMounted, reactive, ref} from "vue";
+import {onMounted, reactive} from "vue";
 import { findProductsByCriteria } from '../services/product';
 import ProductCard from "../components/ProductCard.vue";
 import router from "../router";
@@ -39,11 +39,12 @@ const formData = reactive({
     priceMax: null
 });
 
-const products = ref([]);
+let products = reactive([]);
 
 onMounted(async () => {
     const criteria = {}
-    products.value = await findProductsByCriteria(criteria);
+    const newProducts = await findProductsByCriteria(criteria);
+    products.push(...newProducts)
 });
 
 async function search() {
@@ -62,7 +63,7 @@ async function search() {
             console.error('Minimum price must be less than maximum price.');
             return;
         }
-        products.value = await findProductsByCriteria(criteria);
+        products = await findProductsByCriteria(criteria);
         formData.priceMin = null;
         formData.priceMax = null;
         formData.title = "";

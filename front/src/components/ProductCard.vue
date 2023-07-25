@@ -1,5 +1,6 @@
 <template>
     <div class="card">
+        {{ product }}
         <div class="image">
             <img :src="product.image" alt="Product Image" />
         </div>

@@ -1,38 +1,31 @@
 <script setup>
-import { inject, onMounted, provide, ref } from 'vue'
+import {inject, onMounted, provide, reactive} from 'vue'
 import { logoutKey, userKey } from '../services/authKeys'
 import { RouterLink, RouterView } from 'vue-router'
-import { createOrder, findOrdersByCriteria, findProductsByOrderId } from '../services/order'
+import {
+    findOrCreateOrder,
+    findProductsByOrderId
+} from '../services/order'
 import store from '../store/store'
+import {findProductById} from "../services/product";
 
 const user = inject(userKey)
 const logout = inject(logoutKey)
-const orders = ref([])
+let order = reactive({})
 
 onMounted(async () => {
-  if (user.value != null && user.value.id != null && orders.value != null) {
-    const orderCriteria = {}
-    orderCriteria.user_id = user.value.id
-    orderCriteria.status = 'Draft'
-    ;[orders.value] = await findOrdersByCriteria(orderCriteria)
-    if (orders.value.length === 0) {
-      const orderData = {}
-      orderData.userId = user.value.id
-      orderData.currency = 'EUR'
-      orderData.status = 'Draft'
-      await createOrder(orderData)
-      store.numberOfProductsInCart = 0
-    } else {
-      const products = await findProductsByOrderId(orders.value.id)
-      store.numberOfProductsInCart = products.reduce(
+  if (user.value != null && user.value.id != null && order != null) {
+    const fetchedOrder = await findOrCreateOrder(user.value.id);
+    Object.assign(order, fetchedOrder);
+    const products = await findProductsByOrderId(order.id)
+    store.numberOfProductsInCart = products.reduce(
         (accumulator, product) => accumulator + product.quantity,
         0
-      )
-    }
+    )
   }
 })
 
-provide('order', orders)
+provide('order', order)
 </script>
 
 <template>
@@ -48,7 +41,7 @@ provide('order', orders)
         <RouterLink to="/products">Products</RouterLink>
         <RouterLink to="/user">Users</RouterLink>
       </template>
-        <RouterLink v-if="user && orders" :to="'/cart/' + orders.id">
+        <RouterLink v-if="user && order" :to="'/cart/' + order.id">
         <div class="quantity">{{ store.numberOfProductsInCart }}</div>
         <div class="basket-icon">
           <span class="material-symbols-outlined">shopping_basket</span>
