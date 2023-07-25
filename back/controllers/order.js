@@ -61,7 +61,7 @@ module.exports = function (OrderService, OrderDetailsService, ProductService, Re
           { id: orderDetails[0].id },
           { quantity: newQuantity });
 
-        return res.status(200).json({ message: "Product quantity updated successfully" });
+        return res.sendStatus(200);
       } catch (err) {
         next(err);
       }

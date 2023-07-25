@@ -33,8 +33,7 @@ function handleSubmit() {
             <input v-model.trim="formData.email" type="email" id="email" name="email" placeholder="Email" />
             <p v-if="errors.email">{{ errors.email }}</p>
             <input
-                    :value="formData.password"
-                    @input="formData.password = $event.target.value"
+                    v-model="formData.password"
                     type="password"
                     id="password"
                     name="password"

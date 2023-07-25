@@ -36,6 +36,8 @@ services:
         npm run build
 
   front:
+    env_file:
+      - front/.env
     image: node:19.6
     working_dir: /usr/src/app
     volumes:

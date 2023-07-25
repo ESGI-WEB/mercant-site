@@ -45,8 +45,7 @@ function handleSubmit() {
         <div class="register">
             <p class="title">Don't have an account yet? Please register now.</p>
             <input
-                    :value="formData.lastname"
-                    @input="formData.lastname = $event.target.value"
+                    v-model="formData.lastname"
                     type="text"
                     id="lastname"
                     name="lastname"
@@ -54,8 +53,7 @@ function handleSubmit() {
             />
             <p v-if="errors.lastname">{{ errors.lastname }}</p>
             <input
-                    :value="formData.firstname"
-                    @input="formData.firstname = $event.target.value"
+                    v-model="formData.firstname"
                     type="text"
                     id="firstname"
                     name="firstname"
@@ -65,8 +63,7 @@ function handleSubmit() {
             <input v-model.trim="formData.email" type="email" id="email" name="email" placeholder="Email" />
             <p v-if="errors.email">{{ errors.email }}</p>
             <input
-                    :value="formData.password"
-                    @input="formData.password = $event.target.value"
+                    v-model="formData.password"
                     type="password"
                     id="password"
                     name="password"

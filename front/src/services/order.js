@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3002';
+const API_BASE_URL = import.meta.env.VITE_BASE_URL
 
 async function makeRequest(url, method = 'GET', data = null) {
     try {

@@ -7,7 +7,7 @@
     import { userKey, loginKey, logoutKey, registerKey } from './authKeys';
     import router from "../router";
 
-    const API_BASE_URL = 'http://localhost:3002';
+    const API_BASE_URL = import.meta.env.VITE_BASE_URL
 
     const user = ref(null);
 
