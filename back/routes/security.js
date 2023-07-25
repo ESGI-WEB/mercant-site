@@ -14,6 +14,7 @@ module.exports = function (userService) {
       
       res.json({ token: await user.generateToken() });
     } catch (error) {
+      console.log(error)
       next(error);
     }
   });

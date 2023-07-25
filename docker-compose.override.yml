@@ -3,13 +3,13 @@ version: '3.6'
 services:
   mongo:
     ports:
-      - 27018:27017
+      - "27018:27017"
   db:
     ports:
-      - 5433:5432
+      - "5435:5432"
   server:
     ports:
-      - "3002:3000"
+      - "3002:3003"
     command:
       - /bin/bash
       - -c

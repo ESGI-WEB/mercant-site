@@ -10,6 +10,7 @@ module.exports = function (Controller, options) {
   router.put("/:id", Controller.put);
   router.patch("/:id", Controller.patch);
   router.delete("/:id", checkAuth("Administrator"), Controller.delete);
+  router.post("/:userId/find-or-create", checkAuth(), Controller.firstOrCreate)
 
   router.get("/:id/products", Controller.getProducts);
   router.post("/:id/product", Controller.addProduct);

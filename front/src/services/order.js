@@ -72,3 +72,8 @@ export async function removeOrderProduct(orderId, productId) {
     const url = `${API_BASE_URL}/orders/${orderId}/product/${productId}`;
     return makeRequest(url, 'DELETE');
 }
+
+export async function findOrCreateOrder(userId) {
+    const url = `${API_BASE_URL}/orders/${userId}/find-or-create`;
+    return makeRequest(url, 'POST');
+}
