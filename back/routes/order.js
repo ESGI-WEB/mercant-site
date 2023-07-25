@@ -5,6 +5,7 @@ module.exports = function (Controller, options) {
   const router = Router();
 
   router.get("/", checkAuth('Administrator'), Controller.cget);
+  // TODO get route for user not admin
   router.post("/", Controller.post);
   router.get("/:id", Controller.get);
   router.put("/:id", Controller.put);

@@ -26,11 +26,10 @@
                     {{ order.currency}}
                 </div>
             </div>
-            <div class="pay">
+            <button class="pay">
                 Pay
-            </div>
+            </button>
         </div>
-
     </div>
 
 </template>
