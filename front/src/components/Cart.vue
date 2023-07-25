@@ -26,10 +26,10 @@
                     {{ order.currency}}
                 </div>
             </div>
-            <button class="pay">
+            <button @click="payOrder()" class="pay">
                 Pay
             </button>
-        </div>
+        </button>
     </div>
 
 </template>
@@ -40,7 +40,6 @@ import {onMounted, ref} from "vue";
 import {useRoute} from "vue-router";
 import {findOrderById, findProductsByOrderId} from "../services/order";
 import ProductCartItem from "./ProductCartItem.vue";
-import ProductCard from "./ProductCard.vue";
 import router from "../router";
 
 const order = ref({})
@@ -57,6 +56,11 @@ onMounted(async () => {
 
 function handleProductClicked(product) {
     router.push({ name: 'ProductDetailsCard', params: { id: product.id } });
+}
+
+function payOrder() {
+
+    // TODO raboule la moula
 }
 
 </script>

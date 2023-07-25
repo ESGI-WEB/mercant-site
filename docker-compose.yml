@@ -12,6 +12,8 @@ services:
 
   db:
     image: postgres
+    networks:
+      - mercant-site
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: password
@@ -21,8 +23,11 @@ services:
 
   server:
     image: node
+    networks:
+      - payless-network
+      - mercant-site
     environment:
-      PORT: 3000
+      PORT: 3003
       DATABASE_URL: postgres://root:password@db:5432/app
       JWT_SECRET: HhJK7!hjjh!jg2addMJ78bj
     working_dir: /usr/src/app
@@ -38,6 +43,8 @@ services:
   front:
     env_file:
       - front/.env
+    networks:
+      - mercant-site
     image: node:19.6
     working_dir: /usr/src/app
     volumes:
@@ -52,3 +59,9 @@ services:
 volumes:
   mercant-db-data: {}
   mercant-pg-data: {}
+
+networks:
+  payless-network:
+    external: true
+  mercant-site:
+    driver: bridge

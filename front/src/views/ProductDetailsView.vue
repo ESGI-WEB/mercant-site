@@ -9,13 +9,13 @@
         <div>{{ product.description }}</div>
         <div class="basket">
           <div class="add-button">
-            <button type="button" @click="addToCart('add')">+</button>
+            <button type="button" @click="addToCart('remove')">-</button>
           </div>
           <div class="input-quantity">
               {{ quantity }}
           </div>
           <div class="add-button">
-            <button type="button" @click="addToCart('remove')">-</button>
+            <button type="button" @click="addToCart('add')">+</button>
           </div>
         </div>
       </div>
@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-import { inject, ref, onMounted } from 'vue'
+import {inject, ref, onMounted, reactive} from 'vue'
 import { useRoute } from 'vue-router'
 import {
     findProductsByOrderId,
@@ -37,17 +37,18 @@ import { findProductById } from '../services/product'
 import store from '../store/store'
 
 const productId = ref(null)
-const product = ref({})
+let product = reactive({})
 const quantity = ref(0)
 const order = inject('order')
 
 onMounted(async () => {
   const route = useRoute()
-  if (route && route.params && route.params.id && order.value) {
+  if (route && route.params && route.params.id && order) {
     productId.value = route.params.id
-    product.value = await findProductById(productId.value)
-    if (order.value.id) {
-      const products = await getOrderProducts(order.value.id)
+    const fetchedProduct = await findProductById(productId.value);
+    Object.assign(product, fetchedProduct);
+    if (order.id) {
+      const products = await getOrderProducts(order.id)
       const product = products.find((p) => p.id === parseInt(productId.value))
       if(product) {
         quantity.value = product.quantity
@@ -57,6 +58,7 @@ onMounted(async () => {
 })
 
 async function addToCart(action) {
+
     if (!['add', 'remove'].includes(action)) {
         throw new Error('Invalid action. Action must be either "add" or "remove".');
     }
@@ -64,20 +66,20 @@ async function addToCart(action) {
     const productQuantityChange = action === 'add' ? 1 : -1;
     const isRemovingProduct = productQuantityChange === -1;
 
-    if (!order.value || !order.value.id || !productId.value) {
+    if (!order || !order.id || !productId.value) {
         return;
     }
 
-    const products = await findProductsByOrderId(order.value.id);
+    const products = await findProductsByOrderId(order.id);
     const isProductFound = products.some((product) => product.id === parseInt(productId.value));
 
     if (isProductFound) {
         const newQuantity = quantity.value + productQuantityChange;
 
         if (newQuantity === 0) {
-            await removeOrderProduct(order.value.id, productId.value);
+            await removeOrderProduct(order.id, productId.value);
         } else {
-            await editQuantityOrderProduct(order.value.id, productId.value, { quantity: newQuantity });
+            await editQuantityOrderProduct(order.id, productId.value, { quantity: newQuantity });
         }
         store.numberOfProductsInCart += productQuantityChange;
         quantity.value += productQuantityChange;
@@ -87,7 +89,7 @@ async function addToCart(action) {
             ProductId: productId.value,
             quantity: quantity.value,
         };
-        await addProductToCart(order.value.id, productData);
+        await addProductToCart(order.id, productData);
         store.numberOfProductsInCart += 1;
     }
 }

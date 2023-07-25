@@ -9,6 +9,30 @@ module.exports = function (OrderService, OrderDetailsService, ProductService, Re
     put,
     patch,
     delete: deleteMethod,
+    firstOrCreate: async (req, res, next) => {
+      const { userId } = req.params;
+      const criteria = {
+        user_id: req.params.userId,
+        status: "Draft"
+      };
+      try {
+        const order = await OrderService.findAll(criteria);
+
+        if (order.length === 0) {
+          const orderData = {
+            "userId": userId,
+            "currency": "EUR",
+            "status": "Draft"
+          }
+          const [ data ]= await OrderService.create(orderData);
+          res.status(201).json(data);
+        } else {
+          res.status(200).json(order[0]);
+        }
+      } catch (error) {
+        next(error)
+      }
+    },
     addProduct: async (req, res, next) => {
       try {
         const orderId = parseInt(req.params.id);
@@ -57,11 +81,11 @@ module.exports = function (OrderService, OrderDetailsService, ProductService, Re
         const order = await OrderService.findById(orderId);
         await order.increment({ totalPrice: priceDifference });
 
-        await OrderDetailsService.update(
+        const newOrderDetails = await OrderDetailsService.update(
           { id: orderDetails[0].id },
           { quantity: newQuantity });
 
-        return res.sendStatus(200);
+        return res.status(200).json(newOrderDetails);
       } catch (err) {
         next(err);
       }
