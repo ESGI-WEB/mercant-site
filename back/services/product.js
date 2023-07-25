@@ -1,11 +1,29 @@
 const { Sequelize } = require("sequelize");
 const { Product } = require("../db");
 const ValidationError = require("../errors/ValidationError");
+const { Op } = require("sequelize")
 
 module.exports = {
   findAll: async function (criteria, options = {}) {
+    const { priceMin, priceMax, ...restCriteria } = criteria;
+    const filter = {
+      ...restCriteria,
+    };
+
+    if (priceMin != null) {
+      filter.price = {
+        ...(filter.price || {}),
+        [Op.gte]: priceMin,
+      };
+    }
+    if (priceMax != null) {
+      filter.price = {
+        ...(filter.price || {}),
+        [Op.lte]: priceMax,
+      };
+    }
     return Product.findAll({
-      where: criteria,
+      where: filter,
       ...options,
       order: Object.entries(options.order || {}),
     });

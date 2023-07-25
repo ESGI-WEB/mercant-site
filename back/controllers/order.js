@@ -34,6 +34,38 @@ module.exports = function (OrderService, OrderDetailsService, ProductService, Re
         next(err);
       }
     },
+    editProduct: async (req, res, next) => {
+      try {
+        const orderId = parseInt(req.params.id);
+        const productId = parseInt(req.params.productId);
+        const newQuantity = parseInt(req.body.quantity);
+
+        if (isNaN(orderId) || isNaN(productId) || isNaN(newQuantity)) {
+          return res.status(400).json({ error: "Invalid input" });
+        }
+
+        const orderDetails = await OrderDetailsService.findByOrderIdAndProductId(orderId, productId);
+
+        if (!orderDetails || orderDetails.length === 0) {
+          return res.status(404).json({ error: "Order details not found" });
+        }
+
+        const product = await ProductService.findById(productId);
+        const oldQuantity = orderDetails[0].quantity;
+        const priceDifference = product.price * (newQuantity - oldQuantity);
+
+        const order = await OrderService.findById(orderId);
+        await order.increment({ totalPrice: priceDifference });
+
+        await OrderDetailsService.update(
+          { id: orderDetails[0].id },
+          { quantity: newQuantity });
+
+        return res.sendStatus(200);
+      } catch (err) {
+        next(err);
+      }
+    },
     removeProduct: async (req, res, next) => {
       try {
         const productId = parseInt(req.params.productId);
@@ -79,7 +111,12 @@ module.exports = function (OrderService, OrderDetailsService, ProductService, Re
         const productPromises = productIds.map(productId => ProductService.findById(productId));
         const products = await Promise.all(productPromises);
 
-        res.json(products);
+        const productsWithQuantity = products.map((product, index) => ({
+          ...product.toJSON(),
+          quantity: orderDetails[index].quantity
+        }));
+
+        res.json(productsWithQuantity);
       } catch (err) {
         next(err);
       }

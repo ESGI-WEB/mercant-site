@@ -1,5 +1,5 @@
 const { Sequelize } = require("sequelize");
-const { Order, Product, OrderDetails } = require("../db");
+const { Order, Product, OrderDetails, User} = require("../db");
 const ValidationError = require("../errors/ValidationError");
 
 module.exports = {
@@ -47,6 +47,21 @@ module.exports = {
       };
 
       return await OrderDetails.create(orderDetails);
+    } catch (e) {
+      if (e instanceof Sequelize.ValidationError) {
+        throw ValidationError.createFromSequelizeValidationError(e);
+      }
+      throw e;
+    }
+  },
+  update: async function (criteria, data) {
+    try {
+      const [nb, ordersDetails = []] = await OrderDetails.update(data, {
+        where: criteria,
+        returning: true,
+        individualHooks: true,
+      });
+      return ordersDetails;
     } catch (e) {
       if (e instanceof Sequelize.ValidationError) {
         throw ValidationError.createFromSequelizeValidationError(e);

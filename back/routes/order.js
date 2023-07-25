@@ -14,6 +14,7 @@ module.exports = function (Controller, options) {
   router.get("/:id/products", Controller.getProducts);
   router.post("/:id/product", Controller.addProduct);
   router.delete("/:id/product/:productId", Controller.removeProduct);
+  router.patch("/:id/product/:productId", Controller.editProduct);
 
   router.get("/:id/refund", Controller.getRefund);
   router.post("/:id/refund", checkAuth("Administrator"), Controller.addRefund);
