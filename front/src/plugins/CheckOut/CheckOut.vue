@@ -5,6 +5,8 @@
 <script setup>
 import {onMounted} from "vue";
 
+const emit = defineEmits(['choice'])
+
 defineProps({
   src: {
     type: String,
@@ -12,11 +14,9 @@ defineProps({
   }
 });
 
-onMounted(async () => {
+onMounted( () => {
   window.addEventListener('message', (event) => {
-    if (event.data.data.redirect_url) {
-      window.location.href = event.data.data.redirect_url
-    }
+    emit('choice', event);
   });
 })
 

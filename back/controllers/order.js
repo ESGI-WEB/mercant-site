@@ -14,7 +14,7 @@ module.exports = function (OrderService, OrderDetailsService, ProductService, Re
       try {
         const criteria = {
           UserId: req.user.id,
-          status: {[Op.in]: ["Draft", "Processing"]}
+          status: "Draft"
         };
         const [order, wasCreated] = await OrderService.findOrCreate(criteria, {
           ...criteria,
