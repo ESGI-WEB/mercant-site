@@ -1,3 +1,4 @@
+
 <template>
     <div class="title-cart">
         Cart
@@ -26,31 +27,42 @@
                     {{ order.currency}}
                 </div>
             </div>
-            <button @click="payOrder()" class="pay">
-                Pay
-            </button>
-        </button>
-    </div>
 
+            <Modal>
+              <template #activator="{ openModal }">
+                <button @click="openModal(); payOrder();" class="pay">
+                  Pay
+                </button>
+              </template>
+              <p v-show="loading">Payment en cours...</p>
+              <CheckOut
+                  v-if="!loading && order.checkoutUrl && order.status === 'Processing'"
+                  :src="order.checkoutUrl">
+              </CheckOut>
+            </Modal>
+        </div>
+    </div>
 </template>
 
 <script setup>
 
-import {onMounted, ref} from "vue";
+import {onMounted, ref, reactive} from "vue";
 import {useRoute} from "vue-router";
-import {findOrderById, findProductsByOrderId} from "../services/order";
+import {checkout, findOrderById, findProductsByOrderId} from "../services/order";
 import ProductCartItem from "./ProductCartItem.vue";
+import Modal from "./Modal.vue";
 import router from "../router";
 
-const order = ref({})
-const products = ref({})
+const order = reactive({})
+const products = reactive([])
+const loading = ref(false)
 
 onMounted(async () => {
     const route = useRoute()
     if (route && route.params && route.params.id) {
-        const orderId = route.params.id
-        order.value = await findOrderById(orderId)
-        products.value = await findProductsByOrderId(orderId)
+      const orderId = route.params.id
+      Object.assign(order, await findOrderById(orderId))
+      Object.assign(products, await findProductsByOrderId(orderId))
     }
 })
 
@@ -59,8 +71,16 @@ function handleProductClicked(product) {
 }
 
 function payOrder() {
+  if (order.status === 'Processing' && order.checkoutUrl) {
+    return;
+  }
 
-    // TODO raboule la moula
+  loading.value = true;
+  checkout(order.id)
+      .then(data => {
+        Object.assign(order, data);
+      })
+      .finally(() => loading.value = false);
 }
 
 </script>

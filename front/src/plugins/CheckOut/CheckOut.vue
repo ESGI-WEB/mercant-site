@@ -1,9 +1,16 @@
 <template>
-  <iframe src="http://localhost:3000/payments/bc311628-f5a6-4eda-a4ce-3835585348be/checkout" frameborder="0"></iframe>
+  <iframe :src="src" frameborder="0" width="100%" height="600px"></iframe>
 </template>
 
 <script setup>
 import {onMounted} from "vue";
+
+defineProps({
+  src: {
+    type: String,
+    required: true
+  }
+});
 
 onMounted(async () => {
   window.addEventListener('message', (event) => {

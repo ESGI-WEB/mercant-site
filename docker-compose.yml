@@ -26,10 +26,8 @@ services:
     networks:
       - payless-network
       - mercant-site
-    environment:
-      PORT: 3003
-      DATABASE_URL: postgres://root:password@db:5432/app
-      JWT_SECRET: HhJK7!hjjh!jg2addMJ78bj
+    env_file:
+      - back/.env
     working_dir: /usr/src/app
     volumes:
       - ./back:/usr/src/app

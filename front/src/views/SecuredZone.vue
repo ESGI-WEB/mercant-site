@@ -1,13 +1,14 @@
 <script setup>
 import {inject, onMounted, provide, reactive} from 'vue'
 import { logoutKey, userKey } from '../services/authKeys'
-import { RouterLink, RouterView } from 'vue-router'
+import {RouterLink, RouterView, useRoute} from 'vue-router'
 import {
     findOrCreateOrder,
     findProductsByOrderId
 } from '../services/order'
 import store from '../store/store'
 import {findProductById} from "../services/product";
+import router from "../router";
 
 const user = inject(userKey)
 const logout = inject(logoutKey)
@@ -15,13 +16,21 @@ let order = reactive({})
 
 onMounted(async () => {
   if (user.value != null && user.value.id != null && order != null) {
-    const fetchedOrder = await findOrCreateOrder(user.value.id);
+    const fetchedOrder = await findOrCreateOrder();
     Object.assign(order, fetchedOrder);
     const products = await findProductsByOrderId(order.id)
     store.numberOfProductsInCart = products.reduce(
         (accumulator, product) => accumulator + product.quantity,
         0
     )
+    if (order.status === 'Processing') {
+      await router.push({
+        name: 'Cart',
+        params: {
+          id: order.id
+        }
+      })
+    }
   }
 })
 

@@ -13,11 +13,11 @@ module.exports = (role = null) => {
       const user = jwt.verify(token, process.env.JWT_SECRET);
       req.user = user;
       if (role && req.user.role !== role) {
-        console.log(role)
         return res.sendStatus(403);
       }
       next();
     } catch (err) {
+      console.error(err);
       return res.sendStatus(401);
     }
   };

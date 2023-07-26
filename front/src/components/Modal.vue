@@ -19,14 +19,9 @@ function openModal() {
   <div class="modal" v-show="open">
     <div class="backdrop" @click="closeModal"></div>
     <div class="modal-box">
-      <div class="modal-title">
-        <slot name="title"><h1>Modal title</h1></slot>
-      </div>
+      <slot name="title"></slot>
       <div class="modal-content"><slot>Modal content</slot></div>
-      <div class="modal-actions">
-        <slot name="actions" :closeModal="closeModal"
-        ><button @click="closeModal">Close</button></slot>
-      </div>
+      <slot name="actions" :closeModal="closeModal"></slot>
     </div>
   </div>
 </template>
@@ -64,21 +59,7 @@ function openModal() {
   overflow: hidden;
 }
 
-.modal-title {
-  padding: 1rem;
-  font-size: 1.5rem;
-  font-weight: bold;
-  border-bottom: 1px solid #ccc;
-}
-
 .modal-content {
   padding: 1rem;
-}
-
-.modal-actions {
-  padding: 1rem;
-  display: flex;
-  justify-content: flex-end;
-  border-top: 1px solid #ccc;
 }
 </style>

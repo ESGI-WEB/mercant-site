@@ -13,7 +13,7 @@ module.exports = function (Service) {
           limit: _itemsPerPage,
           data: _sort,
         });
-        res.json(datas);
+        res.json('format' in Service ? await Service.format(datas) : datas);
       } catch (err) {
         next(err);
       }
@@ -21,7 +21,7 @@ module.exports = function (Service) {
     post: async (req, res, next) => {
       try {
         const data = await Service.create(req.body);
-        res.status(201).json(data);
+        res.status(201).json('format' in Service ? await Service.format(data) : data);
       } catch (err) {
         next(err);
       }
@@ -30,7 +30,7 @@ module.exports = function (Service) {
       try {
         const data = await Service.findById(parseInt(req.params.id));
         if (!data) return res.sendStatus(404);
-        res.json(data);
+        res.json('format' in Service ? await Service.format(data) : data);
       } catch (err) {
         next(err);
       }
@@ -42,7 +42,7 @@ module.exports = function (Service) {
           id: parseInt(req.params.id),
           ...req.body,
         });
-        res.status(nbRemoved ? 200 : 201).json(data);
+        res.status(nbRemoved ? 200 : 201).json('format' in Service ? await Service.format(data) : data);
       } catch (err) {
         next(err);
       }
@@ -54,7 +54,7 @@ module.exports = function (Service) {
           req.body
         );
         if (!data) return res.sendStatus(404);
-        res.json(data);
+        res.json('format' in Service ? await Service.format(data) : data);
       } catch (err) {
         next(err);
       }

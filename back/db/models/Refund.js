@@ -3,7 +3,7 @@ const Order = require("./Order");
 
 module.exports = (connection) => {
   class Refund extends Model {
-    static statuses = ["In progress", "Completed", "Canceled"];
+    static statuses = ["In progress", "Completed", "Cancelled"];
   }
 
   Refund.init(
@@ -38,7 +38,6 @@ module.exports = (connection) => {
       },
     },
     {
-      underscored: true,
       sequelize: connection,
       tableName: "refunds",
     }

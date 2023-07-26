@@ -1,7 +1,7 @@
-import Checkout from './Checkout/Checkout.vue'
+import CheckOut from './CheckOut/CheckOut.vue'
 
 export default{
     install(Vue, options){
-        Vue.component('Checkout', Checkout);
+        Vue.component('CheckOut', CheckOut);
     }
 }
