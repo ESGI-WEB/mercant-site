@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-import {inject, ref, onMounted, reactive} from 'vue'
+import {inject, ref, onMounted, reactive, watch} from 'vue'
 import { useRoute } from 'vue-router'
 import {
     findProductsByOrderId,
@@ -40,6 +40,15 @@ const productId = ref(null)
 let product = reactive({})
 const quantity = ref(0)
 const order = inject('order')
+watch(order, async (newValue, oldValue) => {
+  if (newValue.id) {
+    const products = await getOrderProducts(order.id)
+    const product = products.find((p) => p.id === parseInt(productId.value))
+    if(product) {
+      quantity.value = product.quantity
+    }
+  }
+});
 
 onMounted(async () => {
   const route = useRoute()
@@ -47,13 +56,6 @@ onMounted(async () => {
     productId.value = route.params.id
     const fetchedProduct = await findProductById(productId.value);
     Object.assign(product, fetchedProduct);
-    if (order.id) {
-      const products = await getOrderProducts(order.id)
-      const product = products.find((p) => p.id === parseInt(productId.value))
-      if(product) {
-        quantity.value = product.quantity
-      }
-    }
   }
 })
 

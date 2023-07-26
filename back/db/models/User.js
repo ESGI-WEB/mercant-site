@@ -75,7 +75,6 @@ module.exports = function (connection) {
       },
     },
     {
-      underscored: true,
       sequelize: connection,
       tableName: "users",
     }

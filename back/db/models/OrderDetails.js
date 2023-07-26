@@ -15,26 +15,9 @@ module.exports = function (connection) {
           },
         },
       },
-      orderId: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: "orders",
-          key: "id",
-        },
-        allowNull: false,
-      },
-      productId: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: "products",
-          key: "id",
-        },
-        allowNull: false,
-      },
     },
     {
       sequelize: connection,
-      underscored: true,
       tableName: "order_details",
     }
   );

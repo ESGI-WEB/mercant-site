@@ -16,15 +16,15 @@ module.exports = {
   findByOrderIdAndProductId: async function (orderId, productId) {
     return OrderDetails.findAll({
       where: {
-        order_id: orderId,
-        product_id: productId,
+        OrderId: orderId,
+        ProductId: productId,
       },
     });
   },
   findByOrderId: async function (orderId) {
     return OrderDetails.findAll({
       where: {
-        order_id: orderId,
+        OrderId: orderId,
       },
     });
   },
@@ -41,9 +41,9 @@ module.exports = {
       }
 
       const orderDetails = {
-        orderId,
-        productId,
-        quantity,
+        OrderId: orderId,
+        ProductId: productId,
+        quantity: quantity,
       };
 
       return await OrderDetails.create(orderDetails);

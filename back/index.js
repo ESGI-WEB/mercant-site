@@ -17,6 +17,7 @@ const productService = require("./services/product");
 const refundService = require("./services/refund");
 const orderService = require("./services/order");
 const orderDetailsService = require("./services/orderDetails");
+const paylessService = require("./services/payless");
 
 const errorHandler = require("./middlewares/errorHandler");
 const checkAuth = require("./middlewares/check-auth");
@@ -38,7 +39,7 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use("/", new SecurityRouter(userService));
 app.use("/users", checkAuth('Administrator'), new GenericRouter(new GenericController(userService)));
 app.use("/products", checkAuth(), new ProductRouter(new ProductController(productService)));
-app.use("/orders", checkAuth(), new OrderRouter(new OrderController(orderService, orderDetailsService, productService, refundService)));
+app.use("/orders", checkAuth(), new OrderRouter(new OrderController(orderService, orderDetailsService, productService, refundService, paylessService)));
 
 app.use(errorHandler);
 

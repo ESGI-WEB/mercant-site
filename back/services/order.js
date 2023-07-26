@@ -13,6 +13,12 @@ module.exports = {
   findById: async function (id) {
     return Order.findByPk(id);
   },
+  findOrCreate: async function (criteria, defaults) {
+    return Order.findOrCreate({
+      where: criteria,
+      defaults,
+    });
+  },
   create: async function (data) {
     try {
       return await Order.create(data);
@@ -43,4 +49,9 @@ module.exports = {
       where: criteria,
     });
   },
+  async format(datas) {
+    return Array.isArray(datas)
+      ? await Promise.all(datas.map((data) => data.format()))
+      : datas.format();
+  }
 };

@@ -1,6 +1,7 @@
 const GenericController = require("./genericCRUD");
+const {Op} = require("sequelize");
 
-module.exports = function (OrderService, OrderDetailsService, ProductService, RefundService) {
+module.exports = function (OrderService, OrderDetailsService, ProductService, RefundService, PaylessService) {
   const { cget, post, get, put, patch, delete: deleteMethod } = GenericController(OrderService);
   return {
     cget,
@@ -9,27 +10,21 @@ module.exports = function (OrderService, OrderDetailsService, ProductService, Re
     put,
     patch,
     delete: deleteMethod,
-    firstOrCreate: async (req, res, next) => {
-      const { userId } = req.params;
-      const criteria = {
-        user_id: req.params.userId,
-        status: "Draft"
-      };
+    findOrCreate: async (req, res, next) => {
       try {
-        const order = await OrderService.findAll(criteria);
+        const criteria = {
+          UserId: req.user.id,
+          status: {[Op.in]: ["Draft", "Processing"]}
+        };
+        const [order, wasCreated] = await OrderService.findOrCreate(criteria, {
+          ...criteria,
+          "currency": "EUR",
+          "status": "Draft"
+        });
 
-        if (order.length === 0) {
-          const orderData = {
-            "userId": userId,
-            "currency": "EUR",
-            "status": "Draft"
-          }
-          const [ data ]= await OrderService.create(orderData);
-          res.status(201).json(data);
-        } else {
-          res.status(200).json(order[0]);
-        }
+        res.status(wasCreated ? 201 : 200).json(await order.format());
       } catch (error) {
+        console.log(error)
         next(error)
       }
     },
@@ -44,16 +39,10 @@ module.exports = function (OrderService, OrderDetailsService, ProductService, Re
 
         const orderDetails = await OrderDetailsService.create(orderId, ProductId, quantity);
 
-        if (orderDetails) {
-          const product = await ProductService.findById(ProductId);
-          const addedPrice = product.price * quantity;
-          const order = await OrderService.findById(orderId);
-          await order.increment({ totalPrice: addedPrice });
-
-          return res.status(201).json(orderDetails);
-        } else {
+        if (!orderDetails) {
           return res.status(404).json({ error: "Order not found" });
         }
+        return res.status(200).json(orderDetails);
       } catch (err) {
         next(err);
       }
@@ -74,13 +63,6 @@ module.exports = function (OrderService, OrderDetailsService, ProductService, Re
           return res.status(404).json({ error: "Order details not found" });
         }
 
-        const product = await ProductService.findById(productId);
-        const oldQuantity = orderDetails[0].quantity;
-        const priceDifference = product.price * (newQuantity - oldQuantity);
-
-        const order = await OrderService.findById(orderId);
-        await order.increment({ totalPrice: priceDifference });
-
         const newOrderDetails = await OrderDetailsService.update(
           { id: orderDetails[0].id },
           { quantity: newQuantity });
@@ -99,19 +81,12 @@ module.exports = function (OrderService, OrderDetailsService, ProductService, Re
           return res.status(400).json({ error: "Invalid input" });
         }
 
-        const [orderDetails] = await OrderDetailsService.findByOrderIdAndProductId(orderId, productId);
-        const numberOfRemoved = await OrderDetailsService.remove({ productId });
+        const numberOfRemoved = await OrderDetailsService.remove({ ProductId: productId });
 
-        if (numberOfRemoved) {
-          const product = await ProductService.findById(productId);
-          const order = await OrderService.findById(orderId);
-          const removedPrice = product.price * orderDetails.quantity;
-          await order.decrement({ totalPrice: removedPrice });
-
-          return res.sendStatus(204);
-        } else {
+        if (!numberOfRemoved) {
           return res.sendStatus(404);
         }
+        return res.sendStatus(204);
       } catch (err) {
         next(err);
       }
@@ -131,14 +106,12 @@ module.exports = function (OrderService, OrderDetailsService, ProductService, Re
         }
 
         const orderDetails = await OrderDetailsService.findByOrderId(orderId);
-        const productIds = orderDetails.map(order => order.productId);
-        const productPromises = productIds.map(productId => ProductService.findById(productId));
-        const products = await Promise.all(productPromises);
 
-        const productsWithQuantity = products.map((product, index) => ({
-          ...product.toJSON(),
-          quantity: orderDetails[index].quantity
-        }));
+        const productsWithQuantity = [];
+        for (const orderDetail of orderDetails) {
+            const product = await orderDetail.getProduct();
+            productsWithQuantity.push({...product.dataValues, quantity: orderDetail.quantity});
+        }
 
         res.json(productsWithQuantity);
       } catch (err) {
@@ -195,5 +168,28 @@ module.exports = function (OrderService, OrderDetailsService, ProductService, Re
         next(err);
       }
     },
+    checkout: async (req, res, next) => {
+        try {
+            // req.order is provide by the middleware, and it already checked for the order status
+          let order = req.order;
+
+          // call payment api
+          const payment = await PaylessService.createPayment({
+            total: await order.getTotalPrice(),
+            currency: order.currency,
+            client_field: order.UserId,
+            order_field: order.id,
+          });
+
+          [order] = await OrderService.update({id: order.id}, {
+            status: "Processing",
+            checkoutUrl: payment.checkout_link,
+          });
+
+          return res.status(200).json(await order.format());
+        } catch (err) {
+            next(err);
+        }
+    }
   };
 };

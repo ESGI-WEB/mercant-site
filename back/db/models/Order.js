@@ -1,26 +1,41 @@
 const { Model, DataTypes } = require("sequelize");
-const User = require("./User");
-const Product = require("./Product");
-const OrderDetails = require("./OrderDetails");
 
 module.exports = function (connection) {
   class Order extends Model {
     static currencies = ["EUR", "USD", "CHF", "GBP"];
     static statuses = [
       "Draft",
-      "Canceled",
+      "Processing",
+      "Paid",
+      "Cancelled",
       "Refund in progress",
       "Refunded",
       "Refund cancelled",
     ];
+
+    async getTotalPrice() {
+      const orderDetails = (await this.getOrderDetails()) ?? [];
+
+      let total = 0;
+      for (const orderDetail of orderDetails) {
+        const productPrice = (await orderDetail.getProduct()).price;
+        const quantity = orderDetail.quantity;
+        total += productPrice * quantity;
+      }
+
+      return Number(total.toFixed(2));
+    }
+
+    async format() {
+      return {
+        ...this.dataValues,
+        totalPrice: await this.getTotalPrice(),
+      };
+    }
   }
 
   Order.init(
     {
-      totalPrice: {
-        type: DataTypes.FLOAT,
-        defaultValue: 0,
-      },
       currency: {
         type: DataTypes.ENUM(...Order.currencies),
         allowNull: false,
@@ -51,24 +66,15 @@ module.exports = function (connection) {
       },
       refundId: {
         type: DataTypes.INTEGER,
-        references: {
-          model: "refunds",
-          key: "id",
-        },
         allowNull: true,
       },
-      userId: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: "users",
-          key: "id",
-        },
-        allowNull: false,
-      },
+      checkoutUrl: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      }
     },
     {
       sequelize: connection,
-      underscored: true,
       tableName: "orders",
     }
   );

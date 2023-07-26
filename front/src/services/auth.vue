@@ -65,6 +65,9 @@
             }
 
             const data = await response.json();
+            const token = data.token;
+            localStorage.setItem('token', token);
+            user.value = JSON.parse(atob(token.split('.')[1]));
             return Promise.resolve(data);
         } catch (error) {
             return Promise.reject(error);

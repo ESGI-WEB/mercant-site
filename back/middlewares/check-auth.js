@@ -17,6 +17,7 @@ module.exports = (role = null) => {
       }
       next();
     } catch (err) {
+      console.error(err);
       return res.sendStatus(401);
     }
   };
