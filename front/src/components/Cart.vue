@@ -36,6 +36,7 @@
               </template>
               <p v-show="loading">Payment en cours...</p>
               <CheckOut
+                  @choice="handleChoice"
                   v-if="!loading && order.checkoutUrl && order.status === 'Processing'"
                   :src="order.checkoutUrl">
               </CheckOut>
@@ -83,6 +84,11 @@ function payOrder() {
       .finally(() => loading.value = false);
 }
 
+function handleChoice(event) {
+  if (event.data.data.redirect_url) {
+    window.location.href = event.data.data.redirect_url
+  }
+}
 </script>
 
 <style scoped>
