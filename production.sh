@@ -11,7 +11,7 @@ docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 docker exec server_1 node migrate.js
 
 # launch nginx for frontend
-docker build -t nicolaswadoux/merchantsite ./front &&
-docker stop merchant-front &&
-docker rm merchant-front &&
+docker build -t nicolaswadoux/merchantsite ./front
+docker stop merchant-front
+docker rm merchant-front
 docker run --name merchant-front -d -p 80:80 nicolaswadoux/merchantsite
