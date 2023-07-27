@@ -1,0 +1,6 @@
+version: '3'
+
+services:
+  server:
+    ports:
+      - "3002:3003"
