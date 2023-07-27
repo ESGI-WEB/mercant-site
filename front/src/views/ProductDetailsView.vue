@@ -102,7 +102,7 @@ async function addToCart(action) {
 }
 </script>
 
-<style>
+<style scoped>
 .product-details {
   padding: 50px;
   display: flex;

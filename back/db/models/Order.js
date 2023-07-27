@@ -15,12 +15,10 @@ module.exports = function (connection) {
 
     async getTotalPrice() {
       const orderDetails = (await this.getOrderDetails()) ?? [];
-      console.log(orderDetails)
 
       let total = 0;
       for (const orderDetail of orderDetails) {
         const productPrice = (await orderDetail.getProduct()).price;
-        console.log(productPrice)
         const quantity = orderDetail.quantity;
         total += productPrice * quantity;
       }
@@ -32,6 +30,7 @@ module.exports = function (connection) {
       return {
         ...this.dataValues,
         totalPrice: await this.getTotalPrice(),
+        user: (await this.getUser()).format()
       };
     }
   }
