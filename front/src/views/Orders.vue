@@ -1,4 +1,7 @@
 <template>
+    <div class="title">
+        Orders
+    </div>
     <div class="card-container">
         <div v-for="order in orders" :key="order.id" class="card">
             <div class="total-price">
@@ -45,6 +48,15 @@ async function fetchOrders(page) {
 </script>
 
 <style scoped>
+
+.title {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    font-family: Mark-Bold;
+    font-size: 1.3rem;
+}
+
 .card-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
