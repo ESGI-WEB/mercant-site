@@ -12,7 +12,7 @@
             <button type="button" @click="addToCart('remove')">-</button>
           </div>
           <div class="input-quantity">
-              {{ quantity }}
+            {{ quantity }}
           </div>
           <div class="add-button">
             <button type="button" @click="addToCart('add')">+</button>
@@ -25,75 +25,80 @@
 </template>
 
 <script setup>
-import {inject, ref, onMounted, reactive, watch} from 'vue'
+import { inject, ref, onMounted, reactive, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import {
-    findProductsByOrderId,
-    getOrderProducts,
-    addProductToCart,
-    editQuantityOrderProduct, removeOrderProduct
+  findProductsByOrderId,
+  getOrderProducts,
+  addProductToCart,
+  editQuantityOrderProduct,
+  removeOrderProduct
 } from '../services/order'
 import { findProductById } from '../services/product'
 import store from '../store/store'
 
 const productId = ref(null)
-let product = reactive({})
+const product = reactive({})
 const quantity = ref(0)
 const order = inject('order')
 watch(order, async (newValue, oldValue) => {
-  if (newValue.id) {
-    const products = await getOrderProducts(order.id)
-    const product = products.find((p) => p.id === parseInt(productId.value))
-    if(product) {
-      quantity.value = product.quantity
-    }
-  }
-});
+  await assignValues(newValue)
+})
 
 onMounted(async () => {
   const route = useRoute()
   if (route && route.params && route.params.id && order) {
     productId.value = route.params.id
-    const fetchedProduct = await findProductById(productId.value);
-    Object.assign(product, fetchedProduct);
+    const fetchedProduct = await findProductById(productId.value)
+    Object.assign(product, fetchedProduct)
+    await assignValues(order)
   }
 })
 
+async function assignValues(order) {
+  if (order.id) {
+    const products = await getOrderProducts(order.id)
+    const foundProduct = products.find((p) => p.id === parseInt(productId.value))
+    if (foundProduct) {
+      quantity.value = foundProduct.quantity
+    }
+  }
+}
+
 async function addToCart(action) {
+  if (!['add', 'remove'].includes(action)) {
+    throw new Error('Invalid action. Action must be either "add" or "remove".')
+  }
 
-    if (!['add', 'remove'].includes(action)) {
-        throw new Error('Invalid action. Action must be either "add" or "remove".');
+  const productQuantityChange = action === 'add' ? 1 : -1
+  const isRemovingProduct = productQuantityChange === -1
+
+  if (!order || !order.id || !productId.value) {
+    return
+  }
+
+  const products = await findProductsByOrderId(order.id)
+  const isProductFound = products.some((product) => product.id === parseInt(productId.value))
+
+  if (isProductFound) {
+    const newQuantity = quantity.value + productQuantityChange
+
+    if (newQuantity === 0) {
+      await removeOrderProduct(order.id, productId.value)
+    } else {
+      await editQuantityOrderProduct(order.id, productId.value, { quantity: newQuantity })
     }
-
-    const productQuantityChange = action === 'add' ? 1 : -1;
-    const isRemovingProduct = productQuantityChange === -1;
-
-    if (!order || !order.id || !productId.value) {
-        return;
+    store.numberOfProductsInCart += productQuantityChange
+    quantity.value += productQuantityChange
+  } else if (!isRemovingProduct) {
+    quantity.value += 1
+    const productData = {
+      ProductId: productId.value,
+      quantity: quantity.value
     }
-
-    const products = await findProductsByOrderId(order.id);
-    const isProductFound = products.some((product) => product.id === parseInt(productId.value));
-
-    if (isProductFound) {
-        const newQuantity = quantity.value + productQuantityChange;
-
-        if (newQuantity === 0) {
-            await removeOrderProduct(order.id, productId.value);
-        } else {
-            await editQuantityOrderProduct(order.id, productId.value, { quantity: newQuantity });
-        }
-        store.numberOfProductsInCart += productQuantityChange;
-        quantity.value += productQuantityChange;
-    } else if (!isRemovingProduct) {
-        quantity.value += 1;
-        const productData = {
-            ProductId: productId.value,
-            quantity: quantity.value,
-        };
-        await addProductToCart(order.id, productData);
-        store.numberOfProductsInCart += 1;
-    }
+    await addProductToCart(order.id, productData)
+    store.numberOfProductsInCart += 1
+  }
 }
 </script>
 
