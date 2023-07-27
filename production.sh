@@ -8,7 +8,7 @@ docker network create payless-network
 docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 
 # launch migrations
-docker exec server_1 node migrate.js
+docker exec mercant-site_server_1 node migrate.js
 
 # launch nginx for frontend
 docker build -t nicolaswadoux/merchantsite ./front
