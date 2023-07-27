@@ -7,7 +7,7 @@
             {{ product.title.toUpperCase() }}
         </div>
         <div class="title-item">
-            <div>
+            <div class="description-product">
                 {{ product.description }}
             </div>
             <div>
@@ -64,6 +64,10 @@ const props = defineProps(['product']);
 
 .price-item {
    font-family: Mark-Bold;
+}
+
+.description-product {
+    width: 90%;
 }
 
 </style>

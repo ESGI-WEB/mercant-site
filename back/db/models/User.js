@@ -4,6 +4,18 @@ module.exports = function (connection) {
   class User extends Model {
     static roles = ["Customer", "Administrator"];
 
+    format() {
+      const {
+        // values to be removed
+        password = null,
+        // other values are kept
+        ...safeUser
+      } = this.dataValues;
+      safeUser.createdAt = safeUser.updatedAt.toString();
+      safeUser.updatedAt = safeUser.updatedAt.toString();
+      return safeUser;
+    }
+
     async checkPassword(password) {
       const bcrypt = require("bcryptjs");
       return bcrypt.compare(password, this.password);

@@ -53,20 +53,18 @@ async function search() {
         if (formData.title.trim() !== "") {
             criteria.title = formData.title.trim();
         }
-        if (formData.priceMax != null){
+        if (formData.priceMax != null && formData.priceMax !== ""){
             criteria.priceMax = formData.priceMax;
         }
-        if (formData.priceMin != null){
+        if (formData.priceMin != null && formData.priceMax !== ""){
             criteria.priceMin = formData.priceMin;
         }
         if (formData.priceMin != null && formData.priceMax != null && formData.priceMin >= formData.priceMax) {
             console.error('Minimum price must be less than maximum price.');
             return;
         }
-        products = await findProductsByCriteria(criteria);
-        formData.priceMin = null;
-        formData.priceMax = null;
-        formData.title = "";
+        products.splice(0);
+        products.push(...await findProductsByCriteria(criteria));
     } catch (error) {
         console.error('Error on getting products :', error);
     }

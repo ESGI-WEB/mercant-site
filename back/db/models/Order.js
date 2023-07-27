@@ -30,6 +30,7 @@ module.exports = function (connection) {
       return {
         ...this.dataValues,
         totalPrice: await this.getTotalPrice(),
+        user: (await this.getUser()).format()
       };
     }
   }

@@ -42,7 +42,7 @@
     }
 
     .forms {
-        background: url("../assets/images/home.webp");
+        background: url("https://www.sunreef-yachts.com/images/c027f733957624860558b5cd2cb273a1beb19ee4/src/525,untitled-2.jpg?3.8.0.8393.213?3.8.0.8393.213");
         background-size: cover;
         background-position: center;
         flex: auto;

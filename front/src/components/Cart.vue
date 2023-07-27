@@ -133,7 +133,6 @@ function handleChoice(event) {
     cursor: pointer;
     display: flex;
     flex-direction: row;
-    height: 150px;
     gap: 20px;
     max-width: 600px;
     border: 1px solid black;

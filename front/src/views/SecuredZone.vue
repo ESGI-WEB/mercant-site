@@ -7,7 +7,6 @@ import {
     findProductsByOrderId
 } from '../services/order'
 import store from '../store/store'
-import {findProductById} from "../services/product";
 import router from "../router";
 
 const user = inject(userKey)
@@ -42,7 +41,7 @@ provide('order', order)
     <div class="order">
       <RouterLink to="/">Purchase</RouterLink>
       <RouterLink to="/location">Renting</RouterLink>
-      <RouterLink to="/cart">Orders</RouterLink>
+      <RouterLink v-if="user && user.role === 'Administrator'" to="/orders">Orders</RouterLink>
     </div>
     <div class="logo">YachtMasters</div>
     <div class="account">

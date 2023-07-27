@@ -4,6 +4,7 @@ import ProductDetailsCard from "../views/ProductDetailsView.vue";
 import Cart from "../components/Cart.vue";
 import OrderConfirmed from "../views/OrderConfirmed.vue";
 import OrderCancelled from "../views/OrderCancelled.vue";
+import Orders from "../views/Orders.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,7 +33,12 @@ const router = createRouter({
       path: '/order/cancelled',
       name: 'OrderCancelled',
       component: OrderCancelled
-    }
+    },
+    {
+      path: '/orders',
+      name: 'order',
+      component: Orders
+    },
   ]
 })
 
