@@ -29,3 +29,8 @@ Il suffit de lancer la commande suivant pour lancer les migrations :
 ````bash
 docker exec payless-api-1 node migrate.js
 ````
+
+vous pouvez aussi lancer un seed pour avoir quelques données :
+````bash
+docker exec mercant-site-server-1 node seed.js
+````
