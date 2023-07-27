@@ -34,7 +34,7 @@
                   Pay
                 </button>
               </template>
-              <p v-show="loading">Payment en cours...</p>
+              <p v-show="loading">Payment in process...</p>
               <CheckOut
                   @choice="handleChoice"
                   v-if="!loading && order.checkoutUrl && order.status === 'Processing'"
