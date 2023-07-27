@@ -18,9 +18,11 @@ const refundService = require("./services/refund");
 const orderService = require("./services/order");
 const orderDetailsService = require("./services/orderDetails");
 const paylessService = require("./services/payless");
+const paylessRouter = require("./routes/payless");
 
 const errorHandler = require("./middlewares/errorHandler");
 const checkAuth = require("./middlewares/check-auth");
+const checkPayless = require("./middlewares/check-payless");
 
 app.use(express.json());
 app.use(cors());
@@ -40,6 +42,7 @@ app.use("/", new SecurityRouter(userService));
 app.use("/users", checkAuth('Administrator'), new GenericRouter(new GenericController(userService)));
 app.use("/products", checkAuth(), new ProductRouter(new ProductController(productService)));
 app.use("/orders", checkAuth(), new OrderRouter(new OrderController(orderService, orderDetailsService, productService, refundService, paylessService)));
+app.use("/payless", checkPayless(), new paylessRouter());
 
 app.use(errorHandler);
 

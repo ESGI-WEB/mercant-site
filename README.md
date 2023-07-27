@@ -14,6 +14,7 @@ copier le .env.example en .env
 copier le .env.example en .env
 
 La variable `PAYLESS_PUBLIC_KEY` correspond à la clé public du marchant sur le backoffice, ou une clé générée
+La variable `PAYLESS_PUBLIC_KEY` correspond à la clé secrete du marchant sur le backoffice
 
 La variable `PAYLESS_MERCHANT_ID` correspond à l'id du marchant disponible sur le backoffice
 # Lancer le projet
