@@ -1,6 +1,6 @@
 // fill your database with test data, on every running tests, your db will be filled with these data
 const {faker} = require('@faker-js/faker');
-const {Product} = require('./db');
+const {Product, User} = require('./db');
 
 const seed = async () => {
     try {
@@ -8,7 +8,13 @@ const seed = async () => {
             throw new Error('No seeding in production');
         }
 
-        /**** USERS ***/
+        await User.create({
+            lastname: "Admin",
+            firstname: "Admin",
+            email: "admin@payless.com",
+            password: "Azerty1*",
+            role: "Administrator",
+        });
 
         // for tests only, use image uploader
         const images = [
