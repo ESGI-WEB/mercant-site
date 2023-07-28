@@ -8,9 +8,13 @@ module.exports = function () {
     try {
       const orderId = req.payment.order_field;
 
-      const status = req.paymentStatus === 'succeeded' ? 'Paid' : 'Cancelled';
+      const statusMap = {
+        succeeded: "Paid",
+        cancelled: "Cancelled",
+        refunded: "Refunded",
+      }
 
-      const [order] = await orderService.update({id: orderId}, {status});
+      const [order] = await orderService.update({id: orderId}, {status: statusMap[req.paymentStatus]});
 
       res.status(200).json(order);
     } catch (error) {
